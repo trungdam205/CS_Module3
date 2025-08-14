@@ -57,6 +57,18 @@ MODIFY COLUMN role ENUM('ADMIN', 'USER') DEFAULT 'USER';
  ('V Concert','concert quốc gia','Sân vận động Mỹ Đình','2025-08-11',8000000,1000000);
  
  
- 
+ CREATE TABLE tickets (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    event_id INT NOT NULL,
+    user_name varchar(100) NOT NULL,
+    user_email varchar(100) NOT NULL,
+    quantity INT NOT NULL CHECK (quantity > 0),
+    qr_code VARCHAR(200) UNIQUE NOT NULL, -- mã QR để check-in
+    status ENUM('BOOKED', 'CHECKED_IN') DEFAULT 'BOOKED',
+    purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Thời gian đặt vé
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+);
+
+select * from tickets;
 
 
