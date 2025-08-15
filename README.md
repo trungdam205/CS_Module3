@@ -67,7 +67,7 @@
 src/
  └── main/
      ├── java/
-     │   ├── model/      (Entity + DAO)
+     │   ├── model/      (Entity + dao)
      │   ├── controller/ (Servlet)
      │   └── util/       (DBConnection, helpers)
      ├── webapp/
