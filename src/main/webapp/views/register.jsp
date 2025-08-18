@@ -25,8 +25,8 @@
   <form action="auth" method="post">
     <input type="hidden" name="action" value="register">
     <div class="mb-3">
-      <label for="username" class="form-label">Username</label>
-      <input type="text" class="form-control" id="username" name="username" required>
+      <label for="email" class="form-label">Email</label>
+      <input type="text" class="form-control" id="email" name="email" required>
     </div>
 
     <div class="mb-3">
@@ -37,11 +37,6 @@
     <div class="mb-3">
       <label for="fullname" class="form-label">Họ và tên</label>
       <input type="text" class="form-control" id="fullname" name="fullname" required>
-    </div>
-
-    <div class="mb-3">
-      <label for="email" class="form-label">Email</label>
-      <input type="email" class="form-control" id="email" name="email" required>
     </div>
 
     <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
