@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="model.User" %>
+<%@ page import="vn.codegym.cs_module3.model.User" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>

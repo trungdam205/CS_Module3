@@ -5,7 +5,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
-import vn.codegym.cs_module3.dao.userDAO;
+import vn.codegym.cs_module3.DAO.userDAO;
 import vn.codegym.cs_module3.model.User;
 
 @WebServlet(name = "AuthServlet", urlPatterns = "/auth")
