@@ -1,7 +1,7 @@
 package vn.codegym.cs_module3.controller;
 
 import vn.codegym.cs_module3.model.Event;
-import vn.codegym.cs_module3.model.EventDAO;
+import vn.codegym.cs_module3.DAO.EventDAO;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
@@ -24,7 +24,9 @@ public class EventServlet extends HttpServlet {
             case "detail":
                 int id = Integer.parseInt(req.getParameter("id"));
                 Event event = eventDAO.getEventById(id);
+                int remainingTickets = eventDAO.getRemainingTickets(id);
                 req.setAttribute("event", event); // chỉ 1 sự kiện
+                req.setAttribute("remainingTickets", remainingTickets);
                 dispatcher = req.getRequestDispatcher("views/detail.jsp");
                 break;
             default:
