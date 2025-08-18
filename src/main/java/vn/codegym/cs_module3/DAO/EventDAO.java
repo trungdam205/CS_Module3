@@ -1,5 +1,6 @@
-package vn.codegym.cs_module3.model;
+package vn.codegym.cs_module3.DAO;
 
+import vn.codegym.cs_module3.model.Event;
 import vn.codegym.cs_module3.util.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,7 +23,9 @@ public class EventDAO {
                         rs.getString("description"),
                         rs.getString("location"),
                         rs.getTimestamp("date"),
-                        rs.getDouble("price")
+                        rs.getDouble("price"),
+                        rs.getTime("start_time"),
+                        rs.getTime("end_time")
                 );
                 events.add(e);
             }
@@ -48,7 +51,9 @@ public class EventDAO {
                             rs.getString("description"),
                             rs.getString("location"),
                             rs.getTimestamp("date"),
-                            rs.getDouble("price")
+                            rs.getDouble("price"),
+                            rs.getTime("start_time"),
+                            rs.getTime("end_time")
                     );
                 }
             }
@@ -57,4 +62,21 @@ public class EventDAO {
         }
         return event;
     }
+
+    public int getRemainingTickets(int eventId) {
+        String sql = "{CALL getRemainingTickets(?)}"; // Procedure tính remaining
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement cs = conn.prepareCall(sql)) {
+            cs.setInt(1, eventId);
+            try (ResultSet rs = cs.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("remaining");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }
