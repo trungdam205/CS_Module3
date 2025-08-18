@@ -27,6 +27,7 @@ public class EventDAO {
                         rs.getTime("start_time"),
                         rs.getTime("end_time")
                 );
+                e.setImageUrl(rs.getString("image_url"));
                 events.add(e);
             }
         } catch (Exception e) {
@@ -55,6 +56,7 @@ public class EventDAO {
                             rs.getTime("start_time"),
                             rs.getTime("end_time")
                     );
+                    event.setImageUrl(rs.getString("image_url"));
                 }
             }
         } catch (Exception e) {

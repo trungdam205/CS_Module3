@@ -14,6 +14,7 @@ public class Event {
     private Time end_time;
     private int total_tickets;
     private int tickets_sold;
+    private String imageUrl;
 
     public Event() {
     }
@@ -39,7 +40,7 @@ public class Event {
         this.end_time = end_time;
     }
 
-    public Event(int id, String title, String description, String location, Date date, double price, Time start_time, Time end_time, int total_tickets, int tickets_sold) {
+    public Event(int id, String title, String description, String location, Date date, double price, Time start_time, Time end_time, int total_tickets, int tickets_sold,String imageUrl) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -50,6 +51,7 @@ public class Event {
         this.end_time = end_time;
         this.total_tickets = total_tickets;
         this.tickets_sold = tickets_sold;
+        this.imageUrl = imageUrl;
     }
 
     public int getId() {
@@ -131,6 +133,12 @@ public class Event {
     public void setTotal_tickets(int total_tickets) {
         this.total_tickets = total_tickets;
     }
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
 }
