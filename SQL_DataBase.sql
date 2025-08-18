@@ -51,13 +51,14 @@ ALTER TABLE events
 ADD COLUMN start_time TIME NOT NULL DEFAULT '00:00:00' AFTER date,
 ADD COLUMN end_time TIME NOT NULL DEFAULT '00:00:00' AFTER start_time;
 
- 
 INSERT INTO events (title, description, location, date, start_time, end_time, price, total_tickets)
 VALUES 
 ('V CONCERT "RẠNG RỠ VIỆT NAM" - CHẠM VÀO ĐỈNH CAO CỦA ÂM NHẠC VÀ CẢM XÚC', 'Sự kiện âm nhạc đỉnh cao quy tụ những nghệ sĩ hàng đầu Việt Nam', 'Sân vận động Mỹ Đình',
  '2025-08-11', '17:00:00', '23:00:00', 8000000, 1000000),
  ('CONCERT "TỰ HÀO LÀ NGƯỜI VIỆT NAM" - KỶ NIỆM QUỐC KHÁNH 2/9', 'Đêm nhạc quy tụ dàn sao đình đám, hứa hẹn mang đến nhiều cảm xúc bùng nổ', 'Sân vận động Mỹ Đình',
  '2025-08-17', '20:10:00', '22:40:00', 800000, 30000);
+ 
+ update events set image_url='https://laodongthudo.vn/stores/news_dataimages/2025/082025/12/21/san-khau-tu-hao-la-nguoi-viet-nam20250812212606.jpg?rt=20250812212700' where id =2;
  
  SELECT * FROM EVENTS;
  
@@ -68,10 +69,13 @@ VALUES
     user_email varchar(100) NOT NULL,
     quantity INT NOT NULL CHECK (quantity > 0),
     qr_code VARCHAR(200) UNIQUE NOT NULL, -- mã QR để check-in
+    image_url VARCHAR(500) not null,
     status ENUM('BOOKED', 'CHECKED_IN') DEFAULT 'BOOKED',
     purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Thời gian đặt vé
     FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
 );
+
+
 
 DELIMITER $$
 CREATE PROCEDURE insert_ticket(
@@ -106,5 +110,42 @@ END //
 DELIMITER ;
 
 select*from tickets
+
+DELIMITER //
+
+CREATE PROCEDURE updateTicketsSold(
+    IN p_event_id INT,
+    IN p_quantity INT
+)
+BEGIN
+    -- Chỉ update nếu số vé còn lại đủ
+    UPDATE events
+    SET tickets_sold = tickets_sold + p_quantity
+    WHERE id = p_event_id
+      AND (total_tickets - tickets_sold) >= p_quantity;
+
+    -- Nếu không update được (rows_affected = 0) thì báo lỗi
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Not enough tickets available';
+    END IF;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE getRemainingTickets(IN p_event_id INT)
+BEGIN
+    SELECT (total_tickets - tickets_sold) AS remaining
+    FROM events
+    WHERE id = p_event_id;
+END //
+DELIMITER ;
+
+call getRemainingTickets(1);
+select * from tickets;
+select * from events;
+
+
 
 

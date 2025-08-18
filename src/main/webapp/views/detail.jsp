@@ -21,37 +21,46 @@
 <body class="container mt-4">
 <h1 class="mb-4">Chi tiết sự kiện</h1>
 
-<div class="event-detail-container d-flex flex-wrap">
-    <!-- Thông tin bên trái -->
-    <div class="event-info col-md-6 p-4 position-relative">
-        <h4 class="text-white fw-bold">${event.title}</h4>
-        <p class="text-success mb-1">
+<div class="event-detail-container row g-0">
+    <!-- Thông tin bên trái 40% -->
+    <div class="event-info col-md-4 p-4">
+        <p class="text-white fw-bold" style="font-size: 1.12rem;">${event.title}</p>
+        <p>
             <i class="bi bi-calendar-event"></i>
-            <fmt:formatDate value="${event.start_time}" pattern="HH:mm"/> -
-            <fmt:formatDate value="${event.end_time}" pattern="HH:mm"/>,
-            <fmt:formatDate value="${event.date}" pattern="dd/MM/yyyy"/>
+            <span class="text-success mb-1">
+                <fmt:formatDate value="${event.start_time}" pattern="HH:mm"/> -
+                <fmt:formatDate value="${event.end_time}" pattern="HH:mm"/>
+                <fmt:formatDate value="${event.date}" pattern="dd/MM/yyyy"/>
+            </span>
         </p>
-        <p class="text-success mb-1">
-            <i class="bi bi-geo-alt-fill"></i> ${event.location}
+        <p>
+            <i class="bi bi-geo-alt-fill"></i>
+            <span class="text-success mb-1">
+            ${event.location}
+            </span>
         </p>
-        <p class="text-success mb-1">
-            <i class="bi bi-cash-coin"></i> Giá từ
-            <fmt:formatNumber value="${event.price}" type="number" groupingUsed="true"/> VND
+        <p>
+            <i class="bi bi-cash-coin"></i>
+            <span class="text-success mb-1">
+            Giá từ <fmt:formatNumber value="${event.price}" type="number" groupingUsed="true"/> VND
+            </span>
         </p>
-        <p class="text-success">Còn lại: ${remainingTickets} vé</p>
-
+        <p>
+            <i class="bi bi-ticket-fill"></i>
+            <Span class="text-success">
+                ${remainingTickets} vé
+            </Span>
+        </p>
         <div class="mt-4">
             <a href="tickets?action=create&eventId=${event.id}" class="btn btn-primary me-2">Mua vé</a>
-            <a href="events" class="btn btn-secondary">⬅ Quay lại</a>
+            <a href="events" class="btn btn-secondary">Quay lại</a>
         </div>
-
-        <!-- Divider tròn giữa 2 phần -->
-        <div class="divider-circle d-none d-md-block"></div>
     </div>
 
-    <!-- Ảnh bên phải -->
-    <div class="event-image col-md-6 p-0">
-        <img src="${event.imageUrl}" alt="Event Image" class="img-fluid h-100 w-100 object-fit-cover rounded-end shadow">
+    <!-- Ảnh bên phải 60% -->
+    <div class="event-image col-md-8 p-0">
+        <img src="${event.imageUrl}" alt="Event Image"
+             class="img-fluid h-100 w-100 object-fit-cover rounded-end shadow">
     </div>
 </div>
 
@@ -68,15 +77,20 @@
         color: white;
         border-top-left-radius: 15px;
         border-bottom-left-radius: 15px;
-        position: relative;
     }
 
     .event-image img {
         object-fit: cover;
     }
 
+    @media (max-width: 767px) {
+        .event-info, .event-image {
+            border-radius: 15px;
+        }
+    }
 </style>
 
 </body>
 </html>
+
 

@@ -41,59 +41,121 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
-        /* Cố định icon ở góc trái dưới */
-        .cart-icon {
+        body {
+            background-color: #f8f9fa;
+        }
+        h1 {
+            color: #0d6efd;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        /* Danh sách sự kiện */
+        .event-list li a {
+            display: block;
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none; /* Bỏ gạch chân */
+            color: #0d6efd; /* Màu xanh */
+        }
+        .event-list li a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-decoration: none; /* Bảo đảm hover không gạch chân */
+            color: #0b5ed7;
+        }
+        /* Icon vé cố định góc trái dưới */
+        .ticket-icon {
             position: fixed;
             bottom: 20px;
             left: 20px;
             background-color: #0d6efd;
             color: white;
-            font-size: 28px;
-            padding: 12px;
-            border-radius: 50%;
+            font-size: 20px;
+            padding: 14px 18px;
+            border-radius: 50px;
             cursor: pointer;
             z-index: 1050;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            transition: background-color 0.3s, transform 0.2s;
         }
-        .offcanvas-cart {
-            width: 350px;
+        .ticket-icon:hover {
+            background-color: #0b5ed7;
+            transform: scale(1.05);
+        }
+        /* Offcanvas vé */
+        .offcanvas-ticket {
+            width: 400px;
+            background-color: #f1f3f5;
+        }
+        .offcanvas-header {
+            border-bottom: 1px solid #dee2e6;
+        }
+        .ticket-card {
+            background: white;
+            border-radius: 12px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .ticket-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+        }
+        .ticket-card h6 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        .ticket-card p {
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+        .ticket-card p strong {
+            color: #0d6efd;
         }
     </style>
 </head>
 <body class="container mt-4">
 
-<h1 class="mb-4">Danh sách sự kiện</h1>
-<ul class="list-unstyled">
+<h1>Danh sách sự kiện</h1>
+
+<ul class="list-unstyled event-list">
     <c:forEach var="e" items="${eventList}">
-        <li>
-            <a href="events?action=detail&id=${e.id}"
-               class="fw-bold fs-4 text-primary text-decoration-none">
+        <li class="mb-3">
+            <a href="events?action=detail&id=${e.id}">
                     ${e.title}
             </a>
         </li>
     </c:forEach>
 </ul>
 
-<!-- Icon giỏ hàng -->
-<div class="cart-icon" data-bs-toggle="offcanvas" data-bs-target="#cartPanel">
-    <i class="bi bi-cart-fill"></i>
+<!-- Icon vé cố định góc trái dưới -->
+<div class="ticket-icon" data-bs-toggle="offcanvas" data-bs-target="#ticketPanel">
+    <i class="bi bi-ticket-fill"></i>
+    <span>Vé của tôi</span>
 </div>
 
-<!-- Offcanvas hiển thị giỏ hàng -->
-<div class="offcanvas offcanvas-start offcanvas-cart" tabindex="-1" id="cartPanel">
+<!-- Offcanvas hiển thị vé của người dùng -->
+<div class="offcanvas offcanvas-start offcanvas-ticket" tabindex="-1" id="ticketPanel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title">Giỏ hàng của bạn</h5>
+        <h5 class="offcanvas-title">Vé của tôi</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body">
         <c:if test="${empty ticketList}">
-            <p>Chưa có vé nào trong giỏ.</p>
+            <p class="text-muted">Bạn chưa có vé nào.</p>
         </c:if>
         <c:forEach var="t" items="${ticketList}">
-            <div class="card mb-2">
-                <div class="card-body p-2">
-                    <h6 class="mb-1">${t.eventTitle}</h6>
-                    <p class="mb-0">Số vé: <strong>${t.quantity}</strong></p>
-                    <p class="mb-0 text-muted">
+            <div class="card mb-2 ticket-card shadow-sm">
+                <div class="card-body p-3">
+                    <h6>${t.eventTitle}</h6>
+                    <p>Số vé: <strong>${t.quantity}</strong></p>
+                    <p class="text-muted">
                         <fmt:formatDate value="${t.purchaseTime}" pattern="dd/MM/yyyy HH:mm"/>
                     </p>
                 </div>
@@ -105,6 +167,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
+
 
 
 
