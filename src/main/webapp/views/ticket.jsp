@@ -19,17 +19,16 @@
 <body class="container mt-4">
 <h2>Đặt vé</h2>
 <form action="tickets?action=save" method="post">
-
     <input type="hidden" name="eventId" value="${eventId}">
 
     <div class="mb-3">
         <label>Họ tên</label>
-        <input type="text" name="userName" class="form-control" required>
+        <input type="text" class="form-control" value="${sessionScope.user.name}" readonly>
     </div>
 
     <div class="mb-3">
         <label>Email</label>
-        <input type="email" name="userEmail" class="form-control" required>
+        <input type="email" class="form-control" value="${sessionScope.user.email}" readonly>
     </div>
 
     <div class="mb-3">
@@ -39,8 +38,19 @@
 
     <button type="submit" class="btn btn-success">Xác nhận đặt vé</button>
     <a href="events?action=detail&id=${eventId}" class="btn btn-secondary">Quay lại</a>
-
 </form>
+
+
+
+<c:if test="${not empty errorMessage}">
+    <script>
+        Swal.fire({
+            title: "${errorMessage}",
+            icon: "error",
+            confirmButtonText: "OK"
+        });
+    </script>
+</c:if>
 
 <c:if test="${not empty successMessage}">
     <script>
@@ -50,11 +60,12 @@
             confirmButtonText: "Trở lại"
         }).then((result) => {
             if (result.isConfirmed) {
-                // redirect về trang detail của event
                 window.location.href = "events?action=detail&id=${eventId}";
             }
         });
     </script>
 </c:if>
+
+
 </body>
 </html>

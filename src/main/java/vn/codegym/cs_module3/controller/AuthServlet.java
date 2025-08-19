@@ -16,10 +16,15 @@ public class AuthServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // ĐẢM BẢO UTF-8 CHO JSP/HTML
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
+
         String action = request.getParameter("action");
         if ("register".equals(action)) {
             request.getRequestDispatcher("views/register.jsp").forward(request, response);
-        } else { // default login
+        } else {
             request.getRequestDispatcher("views/login.jsp").forward(request, response);
         }
     }
@@ -27,21 +32,33 @@ public class AuthServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // ĐẢM BẢO UTF-8 CHO FORM SUBMIT
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
+
         String action = request.getParameter("action");
         if ("register".equals(action)) {
             register(request, response);
         } else if ("login".equals(action)) {
             login(request, response);
         } else {
-            response.sendRedirect("auth"); // default to login
+            response.sendRedirect("auth");
         }
     }
 
     private void register(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+        String name = safe(request.getParameter("name"));
+        String email = safe(request.getParameter("email")).toLowerCase();
+        String password = safe(request.getParameter("password"));
+
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            request.setAttribute("message", "Vui lòng điền đầy đủ thông tin!");
+            request.setAttribute("type", "danger");
+            request.getRequestDispatcher("views/register.jsp").forward(request, response);
+            return;
+        }
 
         if (userDAO.checkEmail(email)) {
             request.setAttribute("message", "Email đã tồn tại!");
@@ -53,7 +70,7 @@ public class AuthServlet extends HttpServlet {
         User user = new User();
         user.setName(name);
         user.setEmail(email);
-        user.setPassword(password);
+        user.setPassword(password); // GIỮ NGUYÊN, KHÔNG HASH
         user.setRole("USER");
 
         boolean success = userDAO.register(user);
@@ -70,22 +87,22 @@ public class AuthServlet extends HttpServlet {
 
     private void login(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+        String email = safe(request.getParameter("email")).toLowerCase();
+        String password = safe(request.getParameter("password"));
 
-        User user = userDAO.login(email, password);
+        User user = userDAO.login(email, password); // SO SÁNH NGUYÊN BẢN
         if (user != null) {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            if ("ADMIN".equals(user.getRole())) {
-                response.sendRedirect("/events");
-            } else {
-                response.sendRedirect("/events");
-            }
+            response.sendRedirect("/events");
         } else {
             request.setAttribute("message", "Email hoặc mật khẩu không đúng!");
             request.setAttribute("type", "danger");
             request.getRequestDispatcher("views/login.jsp").forward(request, response);
         }
+    }
+
+    private String safe(String s) {
+        return s == null ? "" : s.trim();
     }
 }

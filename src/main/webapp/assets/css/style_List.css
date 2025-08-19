@@ -1,0 +1,89 @@
+body {
+    background-color: #f8f9fa;
+}
+
+h1 {
+    color: #0d6efd;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Danh sách sự kiện */
+.event-list li a {
+    display: block;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none; /* Bỏ gạch chân */
+    color: #0d6efd; /* Màu xanh */
+}
+
+.event-list li a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-decoration: none; /* Bảo đảm hover không gạch chân */
+    color: #0b5ed7;
+}
+
+/* Icon vé cố định góc trái dưới */
+.ticket-icon {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #0d6efd;
+    color: white;
+    font-size: 20px;
+    padding: 14px 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.ticket-icon:hover {
+    background-color: #0b5ed7;
+    transform: scale(1.05);
+}
+
+/* Offcanvas vé */
+.offcanvas-ticket {
+    width: 400px;
+    background-color: #f1f3f5;
+}
+
+.offcanvas-header {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.ticket-card {
+    background: white;
+    border-radius: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ticket-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+.ticket-card h6 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.ticket-card p {
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.ticket-card p strong {
+    color: #0d6efd;
+}

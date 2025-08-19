@@ -15,6 +15,16 @@ public class Event {
     private int total_tickets;
     private int tickets_sold;
     private String imageUrl;
+    private boolean active; // true nếu đang diễn ra
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
 
     public Event() {
     }

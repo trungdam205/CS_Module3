@@ -3,6 +3,7 @@ package vn.codegym.cs_module3.DAO;
 import vn.codegym.cs_module3.model.Event;
 import vn.codegym.cs_module3.util.DBConnection;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +58,13 @@ public class EventDAO {
                             rs.getTime("end_time")
                     );
                     event.setImageUrl(rs.getString("image_url"));
+                    // tính thời điểm kết thúc = ngày sự kiện + giờ kết thúc
+                    LocalDateTime eventEnd = rs.getTimestamp("date")
+                            .toLocalDateTime()
+                            .with(rs.getTime("end_time").toLocalTime());
+
+                    // so sánh với thời điểm hiện tại
+                    event.setActive(LocalDateTime.now().isBefore(eventEnd));
                 }
             }
         } catch (Exception e) {

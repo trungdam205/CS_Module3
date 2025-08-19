@@ -1,5 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="vn.codegym.cs_module3.model.User" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -12,17 +11,15 @@
 <div class="container mt-5">
   <h2 class="text-center mb-4">Đăng nhập</h2>
 
-  <!-- Hiển thị thông báo từ AuthServlet -->
   <%
     String message = (String) request.getAttribute("message");
+    String type = (String) request.getAttribute("type");
     if (message != null) {
   %>
-  <div class="alert alert-danger"><%= message %></div>
-  <%
-    }
-  %>
+  <div class="alert alert-<%= (type != null ? type : "danger") %>"><%= message %></div>
+  <% } %>
 
-  <form action="auth" method="post">
+  <form action="auth" method="post" accept-charset="UTF-8">
     <input type="hidden" name="action" value="login">
     <div class="mb-3">
       <label for="email" class="form-label">Email</label>
@@ -41,7 +38,6 @@
     Chưa có tài khoản? <a href="auth?action=register">Đăng ký</a>
   </p>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
