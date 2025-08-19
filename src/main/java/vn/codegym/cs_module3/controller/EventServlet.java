@@ -20,6 +20,15 @@ public class EventServlet extends HttpServlet {
             action = "list";
         }
 
+        // Lấy user từ session để load vé
+        HttpSession session = req.getSession();
+        vn.codegym.cs_module3.model.User loggedUser = (vn.codegym.cs_module3.model.User) session.getAttribute("user");
+        if (loggedUser != null) {
+            vn.codegym.cs_module3.DAO.TicketDAO ticketDAO = new vn.codegym.cs_module3.DAO.TicketDAO();
+            // Sử dụng email thay vì id
+            req.setAttribute("ticketList", ticketDAO.getTicketsByUserEmail(loggedUser.getEmail()));
+        }
+
         switch (action) {
             case "detail":
                 int id = Integer.parseInt(req.getParameter("id"));
@@ -38,3 +47,4 @@ public class EventServlet extends HttpServlet {
         dispatcher.forward(req, resp);
     }
 }
+

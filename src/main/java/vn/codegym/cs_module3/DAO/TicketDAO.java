@@ -2,8 +2,10 @@ package vn.codegym.cs_module3.DAO;
 
 import vn.codegym.cs_module3.model.Ticket;
 import vn.codegym.cs_module3.util.DBConnection;
-
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TicketDAO {
 
@@ -38,4 +40,49 @@ public class TicketDAO {
             return false;
         }
     }
+
+    public List<Ticket> getTicketsByUserEmail(String userEmail) {
+        List<Ticket> tickets = new ArrayList<>();
+        String sql = "SELECT t.id, t.event_id, t.quantity, e.title AS eventTitle, e.price AS eventPrice, " +
+                "e.date AS eventDate, e.end_time AS eventEndTime " +
+                "FROM tickets t " +
+                "JOIN events e ON t.event_id = e.id " +
+                "WHERE t.user_email = ? " +
+                "ORDER BY t.purchase_date DESC";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, userEmail);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Ticket ticket = new Ticket();
+                ticket.setId(rs.getInt("id"));
+                ticket.setEventId(rs.getInt("event_id"));
+                ticket.setQuantity(rs.getInt("quantity"));
+                ticket.setEventTitle(rs.getString("eventTitle"));
+                ticket.setEventPrice(rs.getDouble("eventPrice"));
+
+                // --- Tính trạng thái dựa trên thời gian sự kiện ---
+                Timestamp eventDate = rs.getTimestamp("eventDate");
+                Time eventEndTime = rs.getTime("eventEndTime");
+                if (eventDate != null && eventEndTime != null) {
+                    LocalDateTime eventEnd = eventDate.toLocalDateTime().with(eventEndTime.toLocalTime());
+                    boolean isActive = LocalDateTime.now().isBefore(eventEnd);
+                    ticket.setStatus(isActive ? "Sự kiện đang diễn ra" : "Sự kiện đã kết thúc");
+                } else {
+                    ticket.setStatus("Không xác định");
+                }
+
+                tickets.add(ticket);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tickets;
+    }
+
 }

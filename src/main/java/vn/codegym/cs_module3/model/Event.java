@@ -17,17 +17,7 @@ public class Event {
     private String imageUrl;
     private boolean active; // true nếu đang diễn ra
 
-    public boolean isActive() {
-        return active;
-    }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-
-    public Event() {
-    }
 
     public Event(String title, String description, String location, Date date, double price, Time start_time, Time end_time) {
         this.title = title;
@@ -150,5 +140,12 @@ public class Event {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-
+    public boolean isActive() {
+        return active;
+    }
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+    public Event() {
+    }
 }

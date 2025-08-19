@@ -21,6 +21,19 @@ public class AuthServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
 
+        HttpSession session = request.getSession(false);
+        User user = (session != null) ? (User) session.getAttribute("user") : null;
+
+        if (user != null) {
+            // Nếu đã đăng nhập thì không cho vào login/register nữa
+            if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+                response.sendRedirect(request.getContextPath() + "/dashboard");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/events");
+            }
+            return;
+        }
+
         String action = request.getParameter("action");
         if ("register".equals(action)) {
             request.getRequestDispatcher("views/register.jsp").forward(request, response);
@@ -50,8 +63,8 @@ public class AuthServlet extends HttpServlet {
     private void register(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String name = safe(request.getParameter("name"));
-        String email = safe(request.getParameter("email")).toLowerCase();
-        String password = safe(request.getParameter("password"));
+        String email = safe(request.getParameter("new_email")).toLowerCase();
+        String password = safe(request.getParameter("new_password"));
 
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
             request.setAttribute("message", "Vui lòng điền đầy đủ thông tin!");
@@ -94,13 +107,19 @@ public class AuthServlet extends HttpServlet {
         if (user != null) {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            response.sendRedirect("/events");
+
+            if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+                response.sendRedirect(request.getContextPath() + "/dashboard");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/events");
+            }
         } else {
             request.setAttribute("message", "Email hoặc mật khẩu không đúng!");
             request.setAttribute("type", "danger");
             request.getRequestDispatcher("views/login.jsp").forward(request, response);
         }
     }
+
 
     private String safe(String s) {
         return s == null ? "" : s.trim();

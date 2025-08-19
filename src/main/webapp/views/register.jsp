@@ -22,6 +22,10 @@
   <form action="auth" method="post" accept-charset="UTF-8">
     <input type="hidden" name="action" value="register">
 
+    <!-- input ẩn để tránh trình duyệt điền tự động -->
+    <input type="text" style="display:none">
+    <input type="password" style="display:none">
+
     <div class="mb-3">
       <label for="name" class="form-label">Họ và tên</label>
       <input type="text" class="form-control" id="name" name="name" required>
@@ -29,12 +33,12 @@
 
     <div class="mb-3">
       <label for="email" class="form-label">Email</label>
-      <input type="text" class="form-control" id="email" name="email" required>
+      <input type="text" class="form-control" id="new_email" name="new_email" required autocomplete="off">
     </div>
 
     <div class="mb-3">
       <label for="password" class="form-label">Password</label>
-      <input type="password" class="form-control" id="password" name="password" required>
+      <input type="password" class="form-control" id="new_password" name="new_password" required autocomplete="new-password">
     </div>
 
     <button type="submit" class="btn btn-primary w-100">Đăng ký</button>

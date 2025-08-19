@@ -19,20 +19,18 @@
   <div class="alert alert-<%= (type != null ? type : "danger") %>"><%= message %></div>
   <% } %>
 
-  <form action="auth" method="post" accept-charset="UTF-8">
-    <input type="hidden" name="action" value="login">
+  <form action="${pageContext.request.contextPath}/auth?action=login" method="post" autocomplete="off">
     <div class="mb-3">
-      <label for="email" class="form-label">Email</label>
-      <input type="text" class="form-control" id="email" name="email" required>
+      <label>Email</label>
+      <input type="email" name="email" class="form-control" required autocomplete="off">
     </div>
-
     <div class="mb-3">
-      <label for="password" class="form-label">Password</label>
-      <input type="password" class="form-control" id="password" name="password" required>
+      <label>Password</label>
+      <input type="password" name="password" class="form-control" required autocomplete="new-password">
     </div>
-
-    <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+    <button type="submit" class="btn btn-primary">Đăng nhập</button>
   </form>
+
 
   <p class="mt-3 text-center">
     Chưa có tài khoản? <a href="auth?action=register">Đăng ký</a>
