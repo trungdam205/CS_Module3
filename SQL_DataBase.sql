@@ -16,14 +16,24 @@ CREATE TABLE user (
   insert into user (name,email,password) values 
 ('Nguyễn Anh Tú','nguyenanhtu@gmail.com','user123456');
 
-select * from user;
- update user set role ='ADMIN' where id =3;
+SELECT 
+    *
+FROM
+    user;
+    
+UPDATE user 
+SET 
+    role = 'ADMIN'
+WHERE
+    id = 3;
  
-UPDATE user
-SET role = 'USER'
-WHERE role = 'CUSTOMER' AND id > 0;
+UPDATE user 
+SET 
+    role = 'USER'
+WHERE
+    role = 'CUSTOMER' AND id > 0;
 
- 
+ update user set password='user123456' where id = 8;
 -- ### Bảng `events`
 -- | Field         | Type         | Ghi chú             |
 -- |-------------  |--------------|---------------------|
@@ -45,20 +55,24 @@ WHERE role = 'CUSTOMER' AND id > 0;
     price DECIMAL(10 , 2 ) NOT NULL,
     total_tickets INT NOT NULL,
     tickets_sold INT DEFAULT 0,
+    image_url VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 ALTER TABLE events
 ADD COLUMN start_time TIME NOT NULL DEFAULT '00:00:00' AFTER date,
 ADD COLUMN end_time TIME NOT NULL DEFAULT '00:00:00' AFTER start_time;
 
-INSERT INTO events (title, description, location, date, start_time, end_time, price, total_tickets)
+INSERT INTO events (title, description, location, date, start_time, end_time, price, total_tickets,image_url)
 VALUES 
-('V CONCERT "RẠNG RỠ VIỆT NAM" - CHẠM VÀO ĐỈNH CAO CỦA ÂM NHẠC VÀ CẢM XÚC', 'Sự kiện âm nhạc đỉnh cao quy tụ những nghệ sĩ hàng đầu Việt Nam', 'Sân vận động Mỹ Đình',
- '2025-08-11', '17:00:00', '23:00:00', 8000000, 1000000),
+('[CONCERT ENCORE] ANH TRAI VƯỢT NGÀN CHÔNG GAI DAY7, DAY8', 'chặng cuối của chuỗi hành trình đáng nhớ Anh trai vượt ngàn chông gai 2024', 'Đỗ Xuân Hợp, Tp Thủ Đức, Phường An Phú, Quận 2, Thành Phố Hồ Chí Minh',
+ '2025-09-6', '18:30:00', '23:00:00', 500000, 1000,'https://salt.tkbcdn.com/ts/ds/4d/5d/93/c38fa1bc1f9ca5f95b882b12d45883bc.jpg'),
+ ('V CONCERT "RẠNG RỠ VIỆT NAM" - CHẠM VÀO ĐỈNH CAO CỦA ÂM NHẠC VÀ CẢM XÚC', 'Sự kiện âm nhạc đỉnh cao quy tụ những nghệ sĩ hàng đầu Việt Nam', 'Sân vận động Mỹ Đình',
+ '2025-08-11', '17:00:00', '23:00:00', 8000000, 1000000,'https://laodongthudo.vn/stores/news_dataimages/2025/082025/12/21/san-khau-tu-hao-la-nguoi-viet-nam20250812212606.jpg?rt=20250812212700'),
  ('CONCERT "TỰ HÀO LÀ NGƯỜI VIỆT NAM" - KỶ NIỆM QUỐC KHÁNH 2/9', 'Đêm nhạc quy tụ dàn sao đình đám, hứa hẹn mang đến nhiều cảm xúc bùng nổ', 'Sân vận động Mỹ Đình',
  '2025-08-17', '20:10:00', '22:40:00', 800000, 30000);
  
- update events set image_url='https://laodongthudo.vn/stores/news_dataimages/2025/082025/12/21/san-khau-tu-hao-la-nguoi-viet-nam20250812212606.jpg?rt=20250812212700' where id =2;
+ update events set image_url='https://salt.tkbcdn.com/ts/ds/39/73/a8/28010109be7d4dea1121714d90cd803e.png' where id =4;
  
  SELECT * FROM EVENTS;
  
@@ -145,7 +159,11 @@ DELIMITER ;
 call getRemainingTickets(1);
 select * from tickets;
 select * from events;
+SELECT *FROM user;
 
+-- lưu/đọc tiếng Việt chính xác trong Java mà không bị lỗi font.
+ALTER DATABASE event_ticketing CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+ALTER TABLE user CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 
