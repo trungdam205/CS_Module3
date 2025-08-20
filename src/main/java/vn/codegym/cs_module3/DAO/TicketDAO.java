@@ -43,7 +43,7 @@ public class TicketDAO {
 
     public List<Ticket> getTicketsByUserEmail(String userEmail) {
         List<Ticket> tickets = new ArrayList<>();
-        String sql = "SELECT t.id, t.event_id, t.quantity, e.title AS eventTitle, e.price AS eventPrice, " +
+        String sql = "SELECT t.id, t.event_id,t.purchase_date, t.quantity, e.title AS eventTitle, e.price AS eventPrice, " +
                 "e.date AS eventDate, e.end_time AS eventEndTime " +
                 "FROM tickets t " +
                 "JOIN events e ON t.event_id = e.id " +
@@ -63,6 +63,7 @@ public class TicketDAO {
                 ticket.setQuantity(rs.getInt("quantity"));
                 ticket.setEventTitle(rs.getString("eventTitle"));
                 ticket.setEventPrice(rs.getDouble("eventPrice"));
+                ticket.setPurchase_date(rs.getDate("purchase_date"));
 
                 // --- Tính trạng thái dựa trên thời gian sự kiện ---
                 Timestamp eventDate = rs.getTimestamp("eventDate");

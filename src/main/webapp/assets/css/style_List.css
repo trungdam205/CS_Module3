@@ -1,5 +1,5 @@
 body {
-    background-color: #f8f9fa;
+    background-color: #27272A;
 }
 
 h1 {
@@ -9,23 +9,37 @@ h1 {
     margin-bottom: 2rem;
 }
 
-/* Danh sách sự kiện */
-.event-list li a {
-    display: block;
-    padding: 12px 16px;
-    border-radius: 10px;
+/* Card sự kiện */
+.event-card {
     background: white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s, box-shadow 0.2s;
-    text-decoration: none; /* Bỏ gạch chân */
-    color: #0d6efd; /* Màu xanh */
+    overflow: hidden; /* Để ảnh bo góc trên khớp với card */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
-.event-list li a:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    text-decoration: none; /* Bảo đảm hover không gạch chân */
-    color: #0b5ed7;
+.event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+.event-img {
+    width: 100%;
+    height: 180px; /* Chiều cao đồng đều */
+    object-fit: cover; /* Cắt ảnh vừa khung */
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.event-card-body {
+    padding: 16px;
+    flex: 1; /* Đẩy nội dung cân đối */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 /* Icon vé cố định góc trái dưới */
@@ -87,5 +101,3 @@ h1 {
 .ticket-card p strong {
     color: #0d6efd;
 }
-
-

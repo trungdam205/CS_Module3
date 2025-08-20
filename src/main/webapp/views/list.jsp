@@ -14,67 +14,128 @@
     <title>Danh sách sự kiện</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link href="assets/css/style_List.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 </head>
-<body class="container mt-4">
+<body class="bg-dark text-light">
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4 rounded px-3">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm mb-4 rounded px-3" style="background-color: #2DC275;">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/events">
-            <i class="bi bi-calendar-event"></i> Event Manager
+        <a class="navbar-brand" href="${pageContext.request.contextPath}/events"
+           style="font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 700; color: white;">
+            <i class="bi bi-star"></i> ConcertStar
         </a>
         <ul class="navbar-nav ms-auto align-items-center">
 
             <!-- Nếu là ADMIN thì hiện Dashboard -->
             <c:if test="${sessionScope.user.role == 'ADMIN'}">
                 <li class="nav-item me-3">
-                    <a class="nav-link text-primary fw-semibold" href="${pageContext.request.contextPath}/dashboard">
+                    <a class="nav-link text-light fw-semibold"
+                       href="${pageContext.request.contextPath}/dashboard">
                         <i class="bi bi-speedometer2"></i> Dashboard
                     </a>
                 </li>
             </c:if>
 
-            <!-- Hiển thị tên người dùng -->
+            <!-- Nút Vé của tôi -->
             <li class="nav-item me-3">
-                <span class="navbar-text fw-semibold text-primary">
-                    <i class="bi bi-person-circle"></i>
-                    Xin chào, ${sessionScope.user.name}
-                </span>
+                <a class="btn d-flex align-items-center fw-semibold text-light"
+                   data-bs-toggle="offcanvas"
+                   data-bs-target="#ticketPanel"
+                   style=" cursor: pointer;">
+                    <i class="bi bi-ticket-perforated me-1"></i> Vé của tôi
+                </a>
             </li>
 
-            <!-- Đăng xuất -->
-            <li class="nav-item">
-                <a class="nav-link text-danger fw-semibold" href="${pageContext.request.contextPath}/logout">
-                    <i class="bi bi-box-arrow-right"></i> Đăng xuất
+            <!-- Hiển thị tên người dùng -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle fw-semibold text-light" href="#"
+                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle"></i>
+                    ${sessionScope.user.name}
                 </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <!-- Vé của tôi -->
+                    <li>
+                        <a class="dropdown-item" href="#"
+                           data-bs-toggle="offcanvas" data-bs-target="#ticketPanel">
+                            <i class="bi bi-ticket-perforated text-success"></i> Vé của tôi
+                        </a>
+                    </li>
+
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+
+                    <!-- Đăng xuất -->
+                    <li>
+                        <a class="dropdown-item text-danger fw-semibold"
+                           href="${pageContext.request.contextPath}/logout">
+                            <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                        </a>
+                    </li>
+                </ul>
             </li>
         </ul>
     </div>
 </nav>
 
 
+<!-- Danh sách sự kiện -->
+<div class="container my-4">
+    <div class="row g-4">
+        <c:forEach var="e" items="${eventList}">
+            <div class="col-md-4">
+                <div class="card bg-dark text-light h-100 d-flex flex-column shadow-sm">
 
-<ul class="list-unstyled event-list">
-    <c:forEach var="e" items="${eventList}">
-        <li class="mb-3">
-            <a href="events?action=detail&id=${e.id}">
-                    ${e.title}
-            </a>
-        </li>
-    </c:forEach>
-</ul>
+                    <!-- Ảnh sự kiện -->
+                    <c:choose>
+                        <c:when test="${not empty e.imageUrl}">
+                            <img src="${e.imageUrl}" alt="${e.title}" class="card-img-top">
+                        </c:when>
+                        <c:otherwise>
+                            <img src="assets/img/placeholder-event.jpg" alt="No image" class="card-img-top">
+                        </c:otherwise>
+                    </c:choose>
 
-<!-- Icon vé cố định góc trái dưới -->
-<div class="ticket-icon" data-bs-toggle="offcanvas" data-bs-target="#ticketPanel">
-    <i class="bi bi-ticket-fill"></i>
-    <span>Vé của tôi</span>
+                    <!-- Nội dung card -->
+                    <div class="card-body flex-grow-1 d-flex flex-column justify-content-between">
+                        <div>
+                            <h6 class="card-title">
+                                <a href="events?action=detail&id=${e.id}" class="text-decoration-none text-info">
+                                        ${e.title}
+                                </a>
+                            </h6>
+
+                            <p class="card-text small">
+                                <i class="bi bi-calendar-event"></i>
+                                <span>
+                                        <fmt:formatDate value="${e.start_time}" pattern="HH:mm"/> -
+                                        <fmt:formatDate value="${e.end_time}" pattern="HH:mm"/>
+                                        <fmt:formatDate value="${e.date}" pattern="dd/MM/yyyy"/>
+                                </span>
+                            </p>
+                        </div>
+
+                        <!-- Nút chi tiết -->
+                        <div class="mt-3">
+                            <a href="events?action=detail&id=${e.id}" class="btn btn-outline-info w-100">
+                                <i class="bi bi-info-circle"></i> Chi tiết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </c:forEach>
+    </div>
 </div>
 
+
 <!-- Offcanvas hiển thị vé của người dùng -->
-<div class="offcanvas offcanvas-start offcanvas-ticket" tabindex="-1" id="ticketPanel">
+<div class="offcanvas offcanvas-start bg-dark text-light" tabindex="-1" id="ticketPanel">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title">Vé của tôi</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body">
         <!-- Nếu user chưa có vé -->
@@ -84,35 +145,40 @@
 
         <!-- Hiển thị vé -->
         <c:forEach var="t" items="${ticketList}">
-            <div class="card mb-2 ticket-card shadow-sm">
+            <div class="card bg-dark text-light mb-2 shadow-sm">
                 <div class="card-body p-3">
-                    <h6 class="fw-bold">${t.eventTitle}</h6>
+                    <a class="fw-bold text-decoration-none text-info"
+                       href="events?action=detail&id=${t.eventId}">${t.eventTitle}
+                    </a>
+                    <p>
+                        Ngày mua:
+                        <span>
+                            <fmt:formatDate value="${t.purchase_date}" pattern="dd/MM/yyyy"/>
+                        </span>
+                    </p>
                     <p>Số vé: <strong>${t.quantity}</strong></p>
-                    <p>Tổng giá:
+                    <p>Tổng:
                         <strong>
                             <fmt:formatNumber value="${t.totalPrice}" type="number" groupingUsed="true"/> VND
                         </strong>
                     </p>
+
                     <p>Trạng thái:
-                        <strong style="color:
-                        <c:choose>
-                        <c:when test="${t.status == 'Sự kiện đã kết thúc'}">red</c:when>
-                        <c:when test="${t.status == 'Sự kiện đang diễn ra'}">green</c:when>
-                        <c:otherwise>black</c:otherwise>
-                        </c:choose>;">
+                        <strong class="
+                            <c:choose>
+                                <c:when test='${t.status == "Sự kiện đã kết thúc"}'>text-danger</c:when>
+                                <c:when test='${t.status == "Sự kiện đang diễn ra"}'>text-success</c:when>
+                                <c:otherwise>text-light</c:otherwise>
+                            </c:choose>">
                                 ${t.status}
                         </strong>
                     </p>
                 </div>
             </div>
         </c:forEach>
-
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
-
