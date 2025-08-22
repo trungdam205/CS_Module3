@@ -6,7 +6,8 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
-    public static final String JDBC_URL = "jdbc:mysql://localhost:3306/event_ticketing";
+    public static final String JDBC_URL = "jdbc:mysql://localhost:3306/event_ticketing" +
+            "?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false";
     public static final String USER = "root";
     public static final String PASSWORD = "123456";
 

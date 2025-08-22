@@ -11,7 +11,11 @@ public class Ticket {
     private String qrCode;
     private String status;
     private Date purchase_date;
+    private String eventTitle;
+    private double eventPrice;
+
     public Ticket() {}
+
     public Ticket(int id, int eventId, String userName, String userEmail, int quantity, String qrCode, String status, Date purchase_date) {
         this.id = id;
         this.eventId = eventId;
@@ -102,6 +106,19 @@ public class Ticket {
 
     public void setPurchase_date(Date purchase_date) {
         this.purchase_date = purchase_date;
+    }
+    public String getEventTitle() { return eventTitle; }
+    public void setEventTitle(String eventTitle) { this.eventTitle = eventTitle; }
+    public double getTotalPrice() {
+        return quantity * eventPrice;
+    }
+
+    public double getEventPrice() {
+        return eventPrice;
+    }
+
+    public void setEventPrice(double eventPrice) {
+        this.eventPrice = eventPrice;
     }
 }
 

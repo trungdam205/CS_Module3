@@ -7,6 +7,8 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.sql.Time;
+import java.util.Date;
 import java.util.List;
 
 @WebServlet(name = "EventServlet", urlPatterns = "/events")
@@ -20,15 +22,29 @@ public class EventServlet extends HttpServlet {
             action = "list";
         }
 
+        // Lấy user từ session để load vé
+        HttpSession session = req.getSession();
+        vn.codegym.cs_module3.model.User loggedUser = (vn.codegym.cs_module3.model.User) session.getAttribute("user");
+        if (loggedUser != null) {
+            vn.codegym.cs_module3.DAO.TicketDAO ticketDAO = new vn.codegym.cs_module3.DAO.TicketDAO();
+            // Sử dụng email thay vì id
+            req.setAttribute("ticketList", ticketDAO.getTicketsByUserEmail(loggedUser.getEmail()));
+        }
+
         switch (action) {
             case "detail":
                 int id = Integer.parseInt(req.getParameter("id"));
                 Event event = eventDAO.getEventById(id);
                 int remainingTickets = eventDAO.getRemainingTickets(id);
-                req.setAttribute("event", event); // chỉ 1 sự kiện
+                req.setAttribute("event", event);
                 req.setAttribute("remainingTickets", remainingTickets);
                 dispatcher = req.getRequestDispatcher("views/detail.jsp");
                 break;
+            case "create":
+                // Hiển thị form tạo event
+                dispatcher = req.getRequestDispatcher("views/admin/create.jsp");
+                break;
+
             default:
                 List<Event> eventList = eventDAO.getAllEvents();
                 req.setAttribute("eventList", eventList); // danh sách sự kiện
@@ -37,4 +53,49 @@ public class EventServlet extends HttpServlet {
         }
         dispatcher.forward(req, resp);
     }
+
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String action = req.getParameter("action");
+        switch (action) {
+            case "create":
+                String title = req.getParameter("title");
+                String description = req.getParameter("description");
+                String location = req.getParameter("location");
+                String dateStr = req.getParameter("date");
+                String startStr = req.getParameter("start_time");
+                String endStr = req.getParameter("end_time");
+                String priceStr = req.getParameter("price");
+                String totalTicketsStr = req.getParameter("total_tickets");
+                String imageUrl = req.getParameter("imageUrl");
+
+                // ✅ Validate cơ bản
+                if (title == null || title.isEmpty() || totalTicketsStr == null || Integer.parseInt(totalTicketsStr) <= 0) {
+                    req.setAttribute("error", "Vui lòng nhập đầy đủ thông tin hợp lệ");
+                    req.getRequestDispatcher("views/admin/create.jsp").forward(req, resp);
+                    return;
+                }
+
+                // ✅ Parse dữ liệu
+                java.sql.Date date = java.sql.Date.valueOf(dateStr);
+                Time startTime = Time.valueOf(startStr.length() == 5 ? startStr + ":00" : startStr);
+                Time endTime = Time.valueOf(endStr.length() == 5 ? endStr + ":00" : endStr);
+                double price = Double.parseDouble(priceStr);
+                int totalTickets = Integer.parseInt(totalTicketsStr);
+
+                Event newEvent = new Event(title, description, location, date, price, startTime, endTime, totalTickets, imageUrl);
+                eventDAO.insertEvent(newEvent);
+
+                // ✅ Thông báo thành công qua session
+                HttpSession session = req.getSession();
+                session.setAttribute("message", "Thêm sự kiện thành công!");
+
+                resp.sendRedirect("events"); // quay về danh sách
+                break;
+        }
+    }
 }
+
+
+

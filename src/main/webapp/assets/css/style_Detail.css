@@ -1,0 +1,30 @@
+.event-detail-container {
+    min-height: 450px;
+    background-color: #2b2b3b;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.event-info {
+    background-color: #3a3a4d;
+    color: white;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+
+.event-image img {
+    object-fit: cover;
+}
+
+@media (max-width: 767px) {
+    .event-info, .event-image {
+        border-radius: 15px;
+    }
+}
+hr.text-white {
+    border: 1px solid white;
+    opacity: 0.5;
+}
+.event-info {
+    min-height: 100%; /* giữ chiều cao full cột */
+}
