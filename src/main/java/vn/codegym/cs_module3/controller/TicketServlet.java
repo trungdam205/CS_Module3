@@ -2,6 +2,7 @@ package vn.codegym.cs_module3.controller;
 
 import vn.codegym.cs_module3.DAO.EventDAO;
 import vn.codegym.cs_module3.DAO.TicketDAO;
+import vn.codegym.cs_module3.model.Event;
 import vn.codegym.cs_module3.model.Ticket;
 import vn.codegym.cs_module3.model.User;
 
@@ -35,7 +36,6 @@ public class TicketServlet extends HttpServlet {
                 case "create":
                     showNewForm(request, response);
                     break;
-                case "list":
                 default:
                     response.sendRedirect("events"); // quay lại danh sách event
                     break;
@@ -45,13 +45,6 @@ public class TicketServlet extends HttpServlet {
         }
     }
 
-    private void showNewForm(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        // Lấy eventId từ param và truyền sang form
-        String eventId = request.getParameter("eventId");
-        request.setAttribute("eventId", eventId);
-        request.getRequestDispatcher("/views/ticket.jsp").forward(request, response);
-    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -71,6 +64,21 @@ public class TicketServlet extends HttpServlet {
         } catch (Exception e) {
             throw new ServletException(e);
         }
+    }
+
+    private void showNewForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int eventId = Integer.parseInt(request.getParameter("eventId"));
+
+        EventDAO eventDAO = new EventDAO();
+        Event event = eventDAO.getEventById(eventId);
+        int remainingTickets = eventDAO.getRemainingTickets(eventId);
+
+        request.setAttribute("eventId", eventId);
+        request.setAttribute("event", event);
+        request.setAttribute("remainingTickets", remainingTickets);
+
+        request.getRequestDispatcher("/views/ticket.jsp").forward(request, response);
     }
 
     private void insertTicket(HttpServletRequest request, HttpServletResponse response)

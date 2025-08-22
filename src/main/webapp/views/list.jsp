@@ -180,5 +180,44 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<footer class="text-light pt-5 pb-4 mt-5" style="background-color: #1D1D1D;">
+    <div class="container">
+        <div class="row">
+            <!-- Logo + giới thiệu -->
+            <div class="col-md-4 mb-3">
+                <h4 class="fw-bold">
+                    <i class="bi bi-star"></i> ConcertStar
+                </h4>
+                <span class="text-white-50">
+                    Nền tảng đặt vé sự kiện âm nhạc hàng đầu Việt Nam.
+                </span><br>
+                <span class="text-white-50">&copy; 2025 ConcertStar. All rights reserved.</span>
+            </div>
+
+            <!-- Liên kết nhanh -->
+            <div class="col-md-4 mb-3">
+                <h5 class="fw-bold">Liên kết nhanh</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-decoration-none text-white-50">Giới thiệu</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Sự kiện</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Liên hệ</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Chính sách bảo mật</a></li>
+                </ul>
+            </div>
+
+            <!-- Mạng xã hội -->
+            <div class="col-md-4 mb-3">
+                <h5 class="fw-bold">Kết nối với chúng tôi</h5>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-white-50 fs-4"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-white-50 fs-4"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="text-white-50 fs-4"><i class="bi bi-youtube"></i></a>
+                    <a href="#" class="text-white-50 fs-4"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

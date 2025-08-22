@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class EventDAO {
 
     public List<Event> getAllEvents() {
@@ -23,7 +24,7 @@ public class EventDAO {
                         rs.getString("title"),
                         rs.getString("description"),
                         rs.getString("location"),
-                        rs.getTimestamp("date"),
+                        rs.getDate("date"),
                         rs.getDouble("price"),
                         rs.getTime("start_time"),
                         rs.getTime("end_time")
@@ -52,7 +53,7 @@ public class EventDAO {
                             rs.getString("title"),
                             rs.getString("description"),
                             rs.getString("location"),
-                            rs.getTimestamp("date"),
+                            rs.getDate("date"),
                             rs.getDouble("price"),
                             rs.getTime("start_time"),
                             rs.getTime("end_time")
@@ -88,5 +89,28 @@ public class EventDAO {
         }
         return 0;
     }
+    public void insertEvent(Event event) {
+        String sql = "{CALL insert_event(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement cs = conn.prepareCall(sql)) {
+
+            cs.setString(1, event.getTitle());
+            cs.setString(2, event.getDescription());
+            cs.setString(3, event.getLocation());
+            cs.setDate(4, event.getDate());
+            cs.setDouble(5, event.getPrice());
+            cs.setTime(6, event.getStart_time());
+            cs.setTime(7, event.getEnd_time());
+            cs.setInt(8, event.getTotal_tickets());
+            cs.setString(9, event.getImageUrl());
+
+            cs.executeUpdate();
+            System.out.println("Thêm event thành công bằng Stored Procedure!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 }
