@@ -27,19 +27,21 @@ public class AuthServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+
         String action = request.getParameter("action");
         if ("register".equals(action)) {
             register(request, response);
         } else if ("login".equals(action)) {
             login(request, response);
         } else {
-            response.sendRedirect("auth"); // default to login
+            response.sendRedirect("/auth"); // default to login
         }
     }
 
     private void register(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String name = request.getParameter("name");
+        String fullname = request.getParameter("fullname"); // trùng với register.jsp
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
@@ -51,7 +53,7 @@ public class AuthServlet extends HttpServlet {
         }
 
         User user = new User();
-        user.setName(name);
+        user.setName(fullname);
         user.setEmail(email);
         user.setPassword(password);
         user.setRole("USER");
@@ -77,10 +79,12 @@ public class AuthServlet extends HttpServlet {
         if (user != null) {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
+
+            // Redirect the role
             if ("ADMIN".equals(user.getRole())) {
-                response.sendRedirect("/events");
+                response.sendRedirect(request.getContextPath() + "/admin/events");
             } else {
-                response.sendRedirect("/events");
+                response.sendRedirect(request.getContextPath() + "/events");
             }
         } else {
             request.setAttribute("message", "Email hoặc mật khẩu không đúng!");
