@@ -1,13 +1,17 @@
 package vn.codegym.cs_module3.controller;
 
+import vn.codegym.cs_module3.DAO.EventDAO;
 import vn.codegym.cs_module3.DAO.TicketDAO;
+import vn.codegym.cs_module3.model.Event;
 import vn.codegym.cs_module3.model.Ticket;
+import vn.codegym.cs_module3.model.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -32,7 +36,6 @@ public class TicketServlet extends HttpServlet {
                 case "create":
                     showNewForm(request, response);
                     break;
-                    case "list":
                 default:
                     response.sendRedirect("events"); // quay lại danh sách event
                     break;
@@ -42,13 +45,6 @@ public class TicketServlet extends HttpServlet {
         }
     }
 
-    private void showNewForm(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        // Lấy eventId từ param và truyền sang form
-        String eventId = request.getParameter("eventId");
-        request.setAttribute("eventId", eventId);
-        request.getRequestDispatcher("/views/ticket.jsp").forward(request, response);
-    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -70,22 +66,61 @@ public class TicketServlet extends HttpServlet {
         }
     }
 
+    private void showNewForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int eventId = Integer.parseInt(request.getParameter("eventId"));
+
+        EventDAO eventDAO = new EventDAO();
+        Event event = eventDAO.getEventById(eventId);
+        int remainingTickets = eventDAO.getRemainingTickets(eventId);
+
+        request.setAttribute("eventId", eventId);
+        request.setAttribute("event", event);
+        request.setAttribute("remainingTickets", remainingTickets);
+
+        request.getRequestDispatcher("/views/ticket.jsp").forward(request, response);
+    }
+
     private void insertTicket(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         int eventId = Integer.parseInt(request.getParameter("eventId"));
-        String userName = request.getParameter("userName");
-        String userEmail = request.getParameter("userEmail");
-        int quantity = Integer.parseInt(request.getParameter("quantity"));
-        String qrCode = UUID.randomUUID().toString();
 
+        // Lấy user từ session
+        HttpSession session = request.getSession();
+        User loggedUser = (User) session.getAttribute("user");
+        if (loggedUser == null) {
+            response.sendRedirect("auth?action=login");
+            return;
+        }
+
+        String userName = loggedUser.getName();
+        String userEmail = loggedUser.getEmail();
+        int quantity = Integer.parseInt(request.getParameter("quantity"));
+
+        // Kiểm tra vé còn lại từ EventDAO
+        EventDAO eventDAO = new EventDAO();
+        int remaining = eventDAO.getRemainingTickets(eventId);
+        if (quantity > remaining) {
+            request.setAttribute("errorMessage",
+                    "Số lượng vé vượt quá giới hạn! Chỉ còn " + remaining + " vé.");
+            request.setAttribute("eventId", eventId);
+            request.getRequestDispatcher("/views/ticket.jsp").forward(request, response);
+            return;
+        }
+
+        String qrCode = UUID.randomUUID().toString();
         Ticket ticket = new Ticket(eventId, userName, userEmail, quantity, qrCode);
-        ticketDAO.insert(ticket);
-        request.setAttribute("successMessage", "Đặt vé thành công!");
+
+        boolean success = ticketDAO.insert(ticket);
+        if (success) {
+            request.setAttribute("successMessage", "Đặt vé thành công!");
+        } else {
+            request.setAttribute("errorMessage", "Có lỗi khi đặt vé. Vui lòng thử lại.");
+        }
+
         request.setAttribute("eventId", eventId);
         request.getRequestDispatcher("/views/ticket.jsp").forward(request, response);
-        response.sendRedirect("events?action=detail&id=" + eventId);
     }
-
 
 }
 

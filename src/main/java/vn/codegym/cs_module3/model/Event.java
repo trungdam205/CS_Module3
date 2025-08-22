@@ -1,7 +1,7 @@
 package vn.codegym.cs_module3.model;
 
 import java.sql.Time;
-import java.util.Date;
+import java.sql.Date;
 
 public class Event {
     private int id;
@@ -14,9 +14,10 @@ public class Event {
     private Time end_time;
     private int total_tickets;
     private int tickets_sold;
+    private String imageUrl;
+    private boolean active; // true nếu đang diễn ra
 
-    public Event() {
-    }
+
 
     public Event(String title, String description, String location, Date date, double price, Time start_time, Time end_time) {
         this.title = title;
@@ -39,7 +40,7 @@ public class Event {
         this.end_time = end_time;
     }
 
-    public Event(int id, String title, String description, String location, Date date, double price, Time start_time, Time end_time, int total_tickets, int tickets_sold) {
+    public Event(int id, String title, String description, String location, Date date, double price, Time start_time, Time end_time, int total_tickets, int tickets_sold,String imageUrl) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -50,6 +51,19 @@ public class Event {
         this.end_time = end_time;
         this.total_tickets = total_tickets;
         this.tickets_sold = tickets_sold;
+        this.imageUrl = imageUrl;
+    }
+
+    public Event( String title, String description, String location, Date date, double price, Time start_time, Time end_time, int total_tickets,String imageUrl){
+        this.title = title;
+        this.description = description;
+        this.location = location;
+        this.date = date;
+        this.price = price;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.total_tickets = total_tickets;
+        this.imageUrl = imageUrl;
     }
 
     public int getId() {
@@ -131,6 +145,19 @@ public class Event {
     public void setTotal_tickets(int total_tickets) {
         this.total_tickets = total_tickets;
     }
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+    public boolean isActive() {
+        return active;
+    }
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+    public Event() {
+    }
 }
