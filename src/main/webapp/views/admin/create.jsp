@@ -21,7 +21,7 @@
                 ${error}
             </div>
 
-            <form action="${pageContext.request.contextPath}/events" method="post" class="needs-validation" novalidate>
+            <form action="${pageContext.request.contextPath}/events" method="post" class="needs-validation" accept-charset="UTF-8" novalidate>
                 <input type="hidden" name="action" value="create"/>
 
                 <div class="mb-3">

@@ -71,11 +71,11 @@ public class EventServlet extends HttpServlet {
                 String imageUrl = req.getParameter("imageUrl");
 
                 // ✅ Validate cơ bản
-                if (title == null || title.isEmpty() || totalTicketsStr == null || Integer.parseInt(totalTicketsStr) <= 0) {
-                    req.setAttribute("error", "Vui lòng nhập đầy đủ thông tin hợp lệ");
-                    req.getRequestDispatcher("views/admin/create.jsp").forward(req, resp);
-                    return;
-                }
+//                if (title == null || title.isEmpty() || totalTicketsStr == null || Integer.parseInt(totalTicketsStr) <= 0) {
+//                    req.setAttribute("error", "Vui lòng nhập đầy đủ thông tin hợp lệ");
+//                    req.getRequestDispatcher("views/admin/create.jsp").forward(req, resp);
+//                    return;
+//                }
 
                 // ✅ Parse dữ liệu
                 java.sql.Date date = java.sql.Date.valueOf(dateStr);
