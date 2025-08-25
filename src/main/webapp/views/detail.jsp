@@ -105,8 +105,8 @@
                 <p>
                     <i class="bi bi-cash-coin"></i>
                     <span class="text-success mb-1">
-                Giá từ <fmt:formatNumber value="${event.price}" type="number" groupingUsed="true"/> VND
-            </span>
+                       Giá từ <fmt:formatNumber value="${event.price}" type="number" groupingUsed="true"/> VND
+                   </span>
                 </p>
 
                 <c:if test="${event.active}">

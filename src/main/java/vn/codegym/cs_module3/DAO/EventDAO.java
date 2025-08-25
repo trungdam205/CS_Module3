@@ -56,7 +56,9 @@ public class EventDAO {
                             rs.getDate("date"),
                             rs.getDouble("price"),
                             rs.getTime("start_time"),
-                            rs.getTime("end_time")
+                            rs.getTime("end_time"),
+                            rs.getInt("total_tickets"),
+                            rs.getString("image_url")
                     );
                     event.setImageUrl(rs.getString("image_url"));
                     // tính thời điểm kết thúc = ngày sự kiện + giờ kết thúc
@@ -111,6 +113,28 @@ public class EventDAO {
         }
     }
 
+    public void updateEvent(Event event) {
+        String sql = "{CALL update_event(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+        try (Connection conn = DBConnection.getConnection();
+             CallableStatement cs = conn.prepareCall(sql)) {
+
+            cs.setInt(1, event.getId());
+            cs.setString(2, event.getTitle());
+            cs.setString(3, event.getDescription());
+            cs.setString(4, event.getLocation());
+            cs.setDate(5, event.getDate());
+            cs.setDouble(6, event.getPrice());
+            cs.setTime(7, event.getStart_time());
+            cs.setTime(8, event.getEnd_time());
+            cs.setInt(9, event.getTotal_tickets());
+            cs.setString(10, event.getImageUrl());
+
+            cs.executeUpdate();
+            System.out.println("Cập nhật event thành công bằng Stored Procedure!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }
