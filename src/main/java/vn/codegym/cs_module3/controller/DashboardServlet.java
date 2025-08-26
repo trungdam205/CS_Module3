@@ -17,7 +17,7 @@ import java.util.List;
 @WebServlet(name = "DashboardServlet", urlPatterns = "/dashboard")
 public class DashboardServlet extends HttpServlet {
 
-    private EventDAO eventDAO = new EventDAO();
+    private final EventDAO eventDAO = new EventDAO();
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // Lấy danh sách sự kiện

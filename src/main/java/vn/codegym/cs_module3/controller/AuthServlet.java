@@ -11,7 +11,7 @@ import vn.codegym.cs_module3.model.User;
 @WebServlet(name = "AuthServlet", urlPatterns = "/auth")
 public class AuthServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private userDAO userDAO = new userDAO();
+    private final userDAO userDAO = new userDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

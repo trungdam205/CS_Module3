@@ -56,7 +56,7 @@ public class TicketDAO {
             ps.setString(1, userEmail);
             ResultSet rs = ps.executeQuery();
 
-            while (rs.next()) {
+                while (rs.next()) {
                 Ticket ticket = new Ticket();
                 ticket.setId(rs.getInt("id"));
                 ticket.setEventId(rs.getInt("event_id"));

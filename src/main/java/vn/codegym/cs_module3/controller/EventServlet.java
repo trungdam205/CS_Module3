@@ -11,11 +11,13 @@ import java.io.IOException;
 import java.sql.Time;
 import java.sql.Date;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @WebServlet(name = "EventServlet", urlPatterns = "/events")
 public class EventServlet extends HttpServlet {
-    private EventDAO eventDAO = new EventDAO();
+    private final EventDAO eventDAO = new EventDAO();
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         RequestDispatcher dispatcher;
@@ -52,6 +54,16 @@ public class EventServlet extends HttpServlet {
                 req.setAttribute("event", eventUD);
                 dispatcher = req.getRequestDispatcher("views/admin/update.jsp");
                 break;
+            case "delete":
+                int idDelete = Integer.parseInt(req.getParameter("id"));
+                eventDAO.deleteEventById(idDelete);
+
+                // Thêm thông báo vào session (nếu muốn)
+                HttpSession sessionDelete = req.getSession();
+                sessionDelete.setAttribute("message", "Xóa sự kiện thành công!");
+
+                resp.sendRedirect("dashboard");
+                return;
             default:
                 List<Event> eventList = eventDAO.getAllEvents();
                 req.setAttribute("eventList", eventList); // danh sách sự kiện
@@ -63,7 +75,7 @@ public class EventServlet extends HttpServlet {
 
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String action = req.getParameter("action");
         switch (action) {
             case "create":
@@ -75,17 +87,11 @@ public class EventServlet extends HttpServlet {
                 String endStr = req.getParameter("end_time");
                 String priceStr = req.getParameter("price");
                 String totalTicketsStr = req.getParameter("total_tickets");
-                String imageUrl = req.getParameter("image-url");
+                String imageUrl = req.getParameter("imageUrl");
 
-                // ✅ Validate cơ bản
-//                if (title == null || title.isEmpty() || totalTicketsStr == null || Integer.parseInt(totalTicketsStr) <= 0) {
-//                    req.setAttribute("error", "Vui lòng nhập đầy đủ thông tin hợp lệ");
-//                    req.getRequestDispatcher("views/admin/create.jsp").forward(req, resp);
-//                    return;
-//                }
-
-                // ✅ Parse dữ liệu
+                // Parse dữ liệu
                 java.sql.Date date = java.sql.Date.valueOf(dateStr);
+
                 Time startTime = Time.valueOf(startStr.length() == 5 ? startStr + ":00" : startStr);
                 Time endTime = Time.valueOf(endStr.length() == 5 ? endStr + ":00" : endStr);
                 double price = Double.parseDouble(priceStr);
@@ -94,7 +100,7 @@ public class EventServlet extends HttpServlet {
                 Event newEvent = new Event(title, description, location, date, price, startTime, endTime, totalTickets, imageUrl);
                 eventDAO.insertEvent(newEvent);
 
-                // ✅ Thông báo thành công qua session
+                // Thông báo thành công qua session
                 HttpSession session = req.getSession();
                 session.setAttribute("message", "Thêm sự kiện thành công!");
 
@@ -113,7 +119,7 @@ public class EventServlet extends HttpServlet {
                 Time start = Time.valueOf(req.getParameter("start_time") + ":00");
                 Time end = Time.valueOf(req.getParameter("end_time") + ":00");
 
-                Event updatedEvent = new Event(id,titleUD, descriptionUD, locationUD, dateUD, priceUD, start, end,totalTicketsUD,imageUrlUD);
+                Event updatedEvent = new Event(id, titleUD, descriptionUD, locationUD, dateUD, priceUD, start, end, totalTicketsUD, imageUrlUD);
 
 
                 eventDAO.updateEvent(updatedEvent);
