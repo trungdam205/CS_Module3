@@ -101,3 +101,13 @@ h1 {
 .ticket-card p strong {
     color: #0d6efd;
 }
+
+/*.card-body h6,*/
+/*.card-body p {*/
+/*    margin-bottom: 0.75rem; !* tất cả dòng đều cách 12px *!*/
+/*}*/
+
+/*.card-body h6:last-child,*/
+/*.card-body p:last-child {*/
+/*    margin-bottom: 0; !* bỏ margin cuối cùng *!*/
+/*}*/

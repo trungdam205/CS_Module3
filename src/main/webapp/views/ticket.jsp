@@ -12,6 +12,7 @@
       integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 
 <html>
 <head>
@@ -116,10 +117,11 @@
 
                 <div class="mb-3">
                     <label class="fw-semibold">Số lượng vé</label>
-                    <input type="number" name="quantity" class="form-control" min="1" max="${remainingTickets}" required>
-                    <small class="text-muted">Còn lại <strong>${remainingTickets}</strong> vé</small>
+                    <input type="number" name="quantity" class="form-control"  required>
+                    <small class="text-muted">
+                        Còn lại <strong>${remainingTickets}</strong> vé
+                    </small>
                 </div>
-
                 <!-- Nút hành động -->
                 <div class="d-flex justify-content-between mt-4">
                     <a href="events?action=detail&id=${eventId}" class="btn btn-outline-secondary">
@@ -150,7 +152,7 @@
         Swal.fire({
             title: "${successMessage}",
             icon: "success",
-            confirmButtonText: "Trở lại"
+            confirmButtonText: "Quay lại"
         }).then((result) => {
             if (result.isConfirmed) {
                 window.location.href = "events?action=detail&id=${eventId}";
@@ -159,7 +161,55 @@
     </script>
 </c:if>
 
+<!-- Offcanvas hiển thị vé của người dùng -->
+<div class="offcanvas offcanvas-start bg-dark text-light" tabindex="-1" id="ticketPanel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Vé của tôi</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <!-- Nếu user chưa có vé -->
+        <c:if test="${empty ticketList}">
+            <p class="text-muted">Bạn chưa có vé nào.</p>
+        </c:if>
 
+        <!-- Hiển thị vé -->
+        <c:forEach var="t" items="${ticketList}">
+            <div class="card bg-dark text-light mb-2 shadow-sm">
+                <div class="card-body p-3">
+                    <a class="fw-bold text-decoration-none text-info"
+                       href="events?action=detail&id=${t.eventId}">${t.eventTitle}
+                    </a>
+                    <p>
+                        Ngày mua:
+                        <span>
+                            <fmt:formatDate value="${t.purchase_date}" pattern="dd/MM/yyyy"/>
+                        </span>
+                    </p>
+                    <p>Số vé: <strong>${t.quantity}</strong></p>
+                    <p>Tổng:
+                        <strong>
+                            <fmt:formatNumber value="${t.totalPrice}" type="number" groupingUsed="true"/> VND
+                        </strong>
+                    </p>
+
+                    <p>Trạng thái:
+                        <strong class="
+                            <c:choose>
+                                <c:when test='${t.status == "Sự kiện đã kết thúc"}'>text-danger</c:when>
+                                <c:when test='${t.status == "Sự kiện đang diễn ra"}'>text-success</c:when>
+                                <c:otherwise>text-light</c:otherwise>
+                            </c:choose>">
+                                ${t.status}
+                        </strong>
+                    </p>
+                </div>
+            </div>
+        </c:forEach>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <footer class="text-light pt-5 pb-4 mt-5" style="background-color: #1D1D1D;">
     <div class="container">

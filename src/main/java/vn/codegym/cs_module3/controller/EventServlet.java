@@ -3,6 +3,7 @@ package vn.codegym.cs_module3.controller;
 import vn.codegym.cs_module3.DAO.TicketDAO;
 import vn.codegym.cs_module3.model.Event;
 import vn.codegym.cs_module3.DAO.EventDAO;
+import vn.codegym.cs_module3.model.User;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
@@ -10,9 +11,6 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.sql.Time;
 import java.sql.Date;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @WebServlet(name = "EventServlet", urlPatterns = "/events")
@@ -28,9 +26,9 @@ public class EventServlet extends HttpServlet {
 
         // Lấy user từ session để load vé
         HttpSession session = req.getSession();
-        vn.codegym.cs_module3.model.User loggedUser = (vn.codegym.cs_module3.model.User) session.getAttribute("user");
+        User loggedUser = (User) session.getAttribute("user");
         if (loggedUser != null) {
-            TicketDAO ticketDAO = new vn.codegym.cs_module3.DAO.TicketDAO();
+            TicketDAO ticketDAO = new TicketDAO();
             // Sử dụng email thay vì id
             req.setAttribute("ticketList", ticketDAO.getTicketsByUserEmail(loggedUser.getEmail()));
         }
@@ -75,7 +73,7 @@ public class EventServlet extends HttpServlet {
 
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String action = req.getParameter("action");
         switch (action) {
             case "create":
@@ -98,13 +96,18 @@ public class EventServlet extends HttpServlet {
                 int totalTickets = Integer.parseInt(totalTicketsStr);
 
                 Event newEvent = new Event(title, description, location, date, price, startTime, endTime, totalTickets, imageUrl);
-                eventDAO.insertEvent(newEvent);
-
+//                eventDAO.insertEvent(newEvent);
+                boolean success = eventDAO.insertEvent(newEvent);
+                if (success) {
+                    req.setAttribute("successMessage", "Thêm sự kiện mới thành công!");
+                } else {
+                    req.setAttribute("errorMessage", "Có lỗi khi thêm sự kiện mới. Vui lòng thử lại.");
+                }
                 // Thông báo thành công qua session
                 HttpSession session = req.getSession();
                 session.setAttribute("message", "Thêm sự kiện thành công!");
 
-                resp.sendRedirect("events"); // quay về danh sách
+                req.getRequestDispatcher("/views/admin/create.jsp").forward(req, resp);
                 break;
             case "update":
                 int id = Integer.parseInt(req.getParameter("id"));
@@ -123,7 +126,7 @@ public class EventServlet extends HttpServlet {
 
 
                 eventDAO.updateEvent(updatedEvent);
-                resp.sendRedirect("events");
+                resp.sendRedirect("dashboard");
                 break;
         }
     }

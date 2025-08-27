@@ -86,12 +86,14 @@
     <div class="row g-4">
         <c:forEach var="e" items="${eventList}">
             <div class="col-md-4">
-                <div class="card bg-dark text-light h-100 d-flex flex-column shadow-sm">
+                <div class="card bg-dark text-light h-100 d-flex flex-column border-0">
 
                     <!-- Ảnh sự kiện -->
                     <c:choose>
                         <c:when test="${not empty e.imageUrl}">
-                            <img src="${e.imageUrl}" alt="${e.title}" class="card-img-top">
+                            <a href="events?action=detail&id=${e.id}">
+                                <img src="${e.imageUrl}" alt="${e.title}" class="img-fluid rounded-4">
+                            </a>
                         </c:when>
                         <c:otherwise>
                             <img src="assets/img/placeholder-event.jpg" alt="No image" class="card-img-top">
@@ -99,29 +101,31 @@
                     </c:choose>
 
                     <!-- Nội dung card -->
-                    <div class="card-body flex-grow-1 d-flex flex-column justify-content-between">
-                        <div>
-                            <h6 class="card-title">
-                                <a href="events?action=detail&id=${e.id}" class="text-decoration-none text-info">
-                                        ${e.title}
-                                </a>
-                            </h6>
+                    <div class="card-body d-flex flex-column ps-0">
+                        <!-- Tiêu đề nằm trên -->
+                        <h6 class="card-title mb-3">
+                            <a href="events?action=detail&id=${e.id}" class="text-decoration-none text-info">
+                                    ${e.title}
+                            </a>
+                        </h6>
 
-                            <p class="card-text small">
-                                <i class="bi bi-calendar-event"></i>
-                                <span>
-                                        <fmt:formatDate value="${e.start_time}" pattern="HH:mm"/> -
-                                        <fmt:formatDate value="${e.end_time}" pattern="HH:mm"/>
-                                        <fmt:formatDate value="${e.date}" pattern="dd/MM/yyyy"/>
+                        <!-- Khối chứa giá và ngày, luôn dính sát lề dưới -->
+                        <div class="mt-auto d-flex flex-column gap-2">
+                            <p class="d-flex align-items-center mb-0">
+                                <i class="bi bi-cash-coin me-1 text-success"></i>
+                                <span class="text-success">
+                                    Từ <fmt:formatNumber value="${e.price}" type="number" groupingUsed="true"/>đ
                                 </span>
                             </p>
-                        </div>
 
-                        <!-- Nút chi tiết -->
-                        <div class="mt-3">
-                            <a href="events?action=detail&id=${e.id}" class="btn btn-outline-info w-100">
-                                <i class="bi bi-info-circle"></i> Chi tiết
-                            </a>
+                            <p class="d-flex align-items-center mb-0">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                <span>
+                                     <fmt:formatDate value="${e.start_time}" pattern="HH:mm"/> -
+                                     <fmt:formatDate value="${e.end_time}" pattern="HH:mm"/>
+                                     <fmt:formatDate value="${e.date}" pattern="dd/MM/yyyy"/>
+                                </span>
+                            </p>
                         </div>
                     </div>
                 </div>

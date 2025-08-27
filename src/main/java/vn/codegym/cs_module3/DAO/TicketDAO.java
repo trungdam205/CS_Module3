@@ -89,7 +89,7 @@ public class TicketDAO {
     }
     public List<Ticket> getAllTickets() {
         List<Ticket> tickets = new ArrayList<>();
-        String sql = "SELECT t.id,t.user_name, t.event_id,t.user_email,t.purchase_date, t.quantity, e.title AS eventTitle, e.price AS eventPrice, " +
+        String sql = "SELECT t.id,t.user_name, t.event_id,t.user_email,t.purchase_date,t.quantity, e.title AS eventTitle, e.price AS eventPrice, " +
                 "e.date AS eventDate, e.end_time AS eventEndTime " +
                 "FROM tickets t " +
                 "JOIN events e ON t.event_id = e.id " +

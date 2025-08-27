@@ -103,6 +103,7 @@ public class TicketServlet extends HttpServlet {
             request.setAttribute("errorMessage",
                     "Số lượng vé vượt quá giới hạn! Chỉ còn " + remaining + " vé.");
             request.setAttribute("eventId", eventId);
+            request.setAttribute("remainingTickets", remaining);
             request.getRequestDispatcher("/views/ticket.jsp").forward(request, response);
             return;
         }
