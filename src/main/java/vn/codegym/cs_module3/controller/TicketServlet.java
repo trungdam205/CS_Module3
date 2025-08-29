@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.UUID;
 
 @WebServlet(name = "TicketServlet", urlPatterns = "/tickets")
@@ -21,7 +20,7 @@ public class TicketServlet extends HttpServlet {
     private TicketDAO ticketDAO;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         ticketDAO = new TicketDAO();
     }
 
@@ -82,7 +81,7 @@ public class TicketServlet extends HttpServlet {
     }
 
     private void insertTicket(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException, ServletException {
+            throws IOException, ServletException {
         int eventId = Integer.parseInt(request.getParameter("eventId"));
 
         // Lấy user từ session
@@ -104,6 +103,7 @@ public class TicketServlet extends HttpServlet {
             request.setAttribute("errorMessage",
                     "Số lượng vé vượt quá giới hạn! Chỉ còn " + remaining + " vé.");
             request.setAttribute("eventId", eventId);
+            request.setAttribute("remainingTickets", remaining);
             request.getRequestDispatcher("/views/ticket.jsp").forward(request, response);
             return;
         }

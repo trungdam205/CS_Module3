@@ -1,4 +1,4 @@
-package vn.codegym.cs_module3.controller;
+package vn.codegym.cs_module3;
 
 import vn.codegym.cs_module3.model.User;
 

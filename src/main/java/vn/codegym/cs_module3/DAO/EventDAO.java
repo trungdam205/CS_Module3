@@ -53,7 +53,9 @@ public class EventDAO {
                             rs.getTimestamp("date"),
                             rs.getDouble("price"),
                             rs.getTime("start_time"),
-                            rs.getTime("end_time")
+                            rs.getTime("end_time"),
+                            rs.getInt("total_tickets"),
+                            rs.getString("image_url")
                     );
                 }
             }
@@ -79,4 +81,9 @@ public class EventDAO {
         return 0;
     }
 
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
