@@ -85,5 +85,59 @@ public class TicketDAO {
 
         return tickets;
     }
+    public Integer findLastTicketId(String userEmail, int eventId) {
+        String sql = "SELECT id FROM tickets " +
+                "WHERE user_email=? AND event_id=? " +
+                "ORDER BY purchase_date DESC, id DESC LIMIT 1";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, userEmail);
+            ps.setInt(2, eventId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : null;
+            }
+        } catch (SQLException e) { throw new RuntimeException(e); }
+    }
+    public void updateImageUrl(int ticketId, String webPath) {
+        String sql = "UPDATE tickets SET image_url=? WHERE id=?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, webPath);
+            ps.setInt(2, ticketId);
+            ps.executeUpdate();
+        } catch (SQLException e) { throw new RuntimeException(e); }
+    }
+    /** Lưu đường dẫn (URL) ảnh QR để hiển thị */
+    public void updateQrPath(int ticketId, String webPath) {
+        String sql = "UPDATE tickets SET qr_code=? WHERE id=?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, webPath);
+            ps.setInt(2, ticketId);
+            ps.executeUpdate();
+        } catch (SQLException e) { throw new RuntimeException(e); }
+    }
+
+    /** Đổi trạng thái vé */
+    public void updateStatus(int ticketId, String status) {
+        String sql = "UPDATE tickets SET status=? WHERE id=?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, ticketId);
+            ps.executeUpdate();
+        } catch (SQLException e) { throw new RuntimeException(e); }
+    }
+
+    public String getStatus(int ticketId) {
+        String sql = "SELECT status FROM tickets WHERE id=?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, ticketId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getString(1) : null;
+            }
+        } catch (SQLException e) { throw new RuntimeException(e); }
+    }
 
 }
