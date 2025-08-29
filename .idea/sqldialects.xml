@@ -2,5 +2,8 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/SQL_DataBase.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/src/main/java/vn/codegym/cs_module3/DAO/EventDAO.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/java/vn/codegym/cs_module3/DAO/TicketDAO.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/java/vn/codegym/cs_module3/DAO/userDAO.java" dialect="GenericSQL" />
   </component>
 </project>

@@ -157,13 +157,68 @@ END //
 DELIMITER ;
 
 call getRemainingTickets(1);
-select * from tickets;
-select * from events;
-SELECT *FROM user;
+
 
 -- lưu/đọc tiếng Việt chính xác trong Java mà không bị lỗi font.
 ALTER DATABASE event_ticketing CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ALTER TABLE user CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+ALTER TABLE events CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
+update events set location='Số 8, Nguyễn Công Hoan, Phường Giảng Võ, Quận Ba Đình, Thành Phố Hà Nội'
+ where id =8 ;
+ 
+ -- thêm event mới
+ DELIMITER $$
+CREATE PROCEDURE insert_event(
+    IN p_title VARCHAR(200),
+    IN p_description TEXT,
+    IN p_location VARCHAR(200),
+    IN p_date DATE,
+    IN p_price DECIMAL(10,2),
+    IN p_start_time TIME,
+    IN p_end_time TIME,
+    IN p_total_tickets INT,
+    IN p_image_url VARCHAR(500)
+)
+BEGIN
+    INSERT INTO events (title, description, location, date, price, start_time, end_time, total_tickets, image_url)
+    VALUES (p_title, p_description, p_location, p_date, p_price, p_start_time, p_end_time, p_total_tickets,  p_image_url);
+END$$
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE update_event(
+    IN p_id INT,
+    IN p_title VARCHAR(255),
+    IN p_description TEXT,
+    IN p_location VARCHAR(255),
+    IN p_date DATE,
+    IN p_price DOUBLE,
+    IN p_start TIME,
+    IN p_end TIME,
+    IN p_total INT,
+    IN p_image VARCHAR(500)
+)
+BEGIN
+    UPDATE events
+    SET 
+        title = p_title,
+        description = p_description,
+        location = p_location,
+        date = p_date,
+        price = p_price,
+        start_time = p_start,
+        end_time = p_end,
+        total_tickets = p_total,
+        image_url = p_image
+    WHERE id = p_id;
+END //
+DELIMITER ;
+
+select * from tickets;
+select * from events;
+SELECT *FROM user;
+
+delete from events where id =9;
 

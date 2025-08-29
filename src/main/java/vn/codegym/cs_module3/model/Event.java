@@ -54,6 +54,22 @@ public class Event {
         this.imageUrl = imageUrl;
     }
 
+    public Event(int id, String title, String description, String location,
+                 java.sql.Date date, double price, java.sql.Time start_time,
+                 java.sql.Time end_time, int total_tickets, String imageUrl) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.location = location;
+        this.date = date;
+        this.price = price;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.total_tickets = total_tickets;
+        this.imageUrl = imageUrl;
+    }
+
+
     public Event( String title, String description, String location, Date date, double price, Time start_time, Time end_time, int total_tickets,String imageUrl){
         this.title = title;
         this.description = description;
