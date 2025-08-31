@@ -172,4 +172,97 @@ public class EventDAO {
             e.printStackTrace();
         }
     }
+
+
+    public List<Event> searchEvents(String keyword, String location, String priceRange) {
+        List<Event> events = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM events WHERE 1=1");
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND REPLACE(title, '  ', ' ') LIKE ?");
+        }
+        if (location != null && !location.trim().isEmpty()) {
+            sql.append(" AND location LIKE ?");
+        }
+        if (priceRange != null && !priceRange.isEmpty()) {
+            switch (priceRange) {
+                case "1": // dưới 500k
+                    sql.append(" AND price < 500000");
+                    break;
+                case "2": // 500k - 1 triệu
+                    sql.append(" AND price BETWEEN 500000 AND 1000000");
+                    break;
+                case "3": // trên 1 triệu
+                    sql.append(" AND price > 1000000");
+                    break;
+            }
+        }
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) { // 🔹 khai báo ps ở đây
+
+            int index = 1; // 🔹 khai báo index
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                ps.setString(index++, "%" + keyword.trim().replaceAll("\\s+", " ") + "%");
+            }
+            if (location != null && !location.trim().isEmpty()) {
+                ps.setString(index++, "%" + location.trim() + "%");
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Event e = new Event(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getString("location"),
+                        rs.getDate("date"),
+                        rs.getDouble("price"),
+                        rs.getTime("start_time"),
+                        rs.getTime("end_time"),
+                        rs.getInt("total_tickets"),
+                        rs.getInt("tickets_sold"),
+                        rs.getString("image_url")
+                );
+                events.add(e);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return events;
+    }
+
+    public List<String> getAllCities() {
+        List<String> cities = new ArrayList<>();
+        String sql = "SELECT location FROM events";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String location = rs.getString("location");
+                if (location != null && !location.isEmpty()) {
+                    // lấy từ cuối cùng sau dấu phẩy (ví dụ "Hà Nội")
+                    String[] parts = location.split(",");
+                    String city = parts[parts.length - 1].trim();
+
+                    // tránh trùng lặp
+                    if (!cities.contains(city)) {
+                        cities.add(city);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return cities;
+    }
+
+
+
+
 }

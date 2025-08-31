@@ -121,4 +121,43 @@ public class TicketDAO {
         return tickets;
     }
 
+
+    public static List<Ticket> searchTickets(String keyword) {
+        List<Ticket> tickets = new ArrayList<>();
+        String sql = "SELECT t.id, t.user_name, t.user_email, t.quantity, t.purchase_date, " +
+                "e.title AS eventTitle, e.price AS eventPrice " +
+                "FROM tickets t " +
+                "JOIN events e ON t.event_id = e.id " +
+                "WHERE t.user_name LIKE ? OR t.user_email LIKE ? OR e.title LIKE ? " +
+                "ORDER BY t.purchase_date DESC";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            String likeKeyword = "%" + (keyword == null ? "" : keyword) + "%";
+            ps.setString(1, likeKeyword);
+            ps.setString(2, likeKeyword);
+            ps.setString(3, likeKeyword);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Ticket ticket = new Ticket();
+                ticket.setId(rs.getInt("id"));
+                ticket.setUserName(rs.getString("user_name"));
+                ticket.setUserEmail(rs.getString("user_email"));
+                ticket.setQuantity(rs.getInt("quantity"));
+                ticket.setEventTitle(rs.getString("eventTitle"));
+                ticket.setEventPrice(rs.getDouble("eventPrice"));
+                ticket.setPurchase_date(rs.getTimestamp("purchase_date"));
+
+                tickets.add(ticket);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tickets;
+    }
+
 }

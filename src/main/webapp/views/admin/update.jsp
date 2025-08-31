@@ -136,14 +136,14 @@
                 <!-- Giá vé / Tổng số vé / Ảnh -->
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Giá vé (VNĐ)</label>
+                        <label class="form-label">Giá</label>
                         <input type="number" id="priceInput" name="price" min="0"
                                class="form-control" value="${event.price}" required>
 
                         <small class="text-muted">
-                            Giá hiển thị:
+                            Giá:
                             <span id="formattedPrice">
-                            <fmt:formatNumber value="${event.price}" pattern="#,###"/>
+                               <fmt:formatNumber value="${event.price}" pattern="#,###"/>
                             </span> VNĐ
                         </small>
 
