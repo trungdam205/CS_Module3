@@ -63,22 +63,6 @@ public class EventServlet extends HttpServlet {
 
                 resp.sendRedirect("dashboard");
                 return;
-//            case "search":
-//                String keyword = req.getParameter("keyword");
-//                if (keyword != null) {
-//                    keyword = keyword.trim().replaceAll("\\s+", " "); // bỏ nhiều space
-//                }
-//                String location = req.getParameter("location");
-//                String price = req.getParameter("price");
-//
-//                List<String> cities = eventDAO.getAllCities();
-//                req.setAttribute("cities", cities);
-//
-//                List<Event> searchResults = eventDAO.searchEvents(keyword, location, price);
-//                req.setAttribute("eventList", searchResults);
-//                dispatcher = req.getRequestDispatcher("views/admin/dashboard.jsp");
-//                break;
-
             case "search":
                 String keyword = req.getParameter("keyword");
                 if (keyword != null) {
@@ -114,27 +98,6 @@ public class EventServlet extends HttpServlet {
         dispatcher.forward(req, resp);
     }
 
-//            case "search":
-//                String keyword = req.getParameter("keyword");
-//                if (keyword != null) {
-//                    keyword = keyword.trim().replaceAll("\\s+", " ");
-//                }
-//                String location = req.getParameter("location");
-//                String price = req.getParameter("price");
-//                String source = req.getParameter("source"); // lấy nguồn
-//
-//                List<Event> searchResults = eventDAO.searchEvents(keyword, location, price);
-//                req.setAttribute("eventList", searchResults);
-//
-//                if ("dashboard".equals(source)) {
-//                    dispatcher = req.getRequestDispatcher("views/admin/dashboard.jsp");
-//                } else if ("list".equals(source)) {
-//                    dispatcher = req.getRequestDispatcher("views/list.jsp");
-//                } else {
-//                    dispatcher = req.getRequestDispatcher("views/admin/dashboard.jsp"); // mặc định
-//                }
-//                break;
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String action = req.getParameter("action");
@@ -159,7 +122,6 @@ public class EventServlet extends HttpServlet {
                 int totalTickets = Integer.parseInt(totalTicketsStr);
 
                 Event newEvent = new Event(title, description, location, date, price, startTime, endTime, totalTickets, imageUrl);
-//                eventDAO.insertEvent(newEvent);
                 boolean success = eventDAO.insertEvent(newEvent);
                 if (success) {
                     req.setAttribute("successMessage", "Thêm sự kiện mới thành công!");
