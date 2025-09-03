@@ -13,21 +13,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-
+import java.sql.SQLException;
 import java.util.UUID;
 
 @WebServlet(name = "TicketServlet", urlPatterns = "/tickets")
 public class TicketServlet extends HttpServlet {
     private TicketDAO ticketDAO;
+    private EventDAO eventDAO;
 
     @Override
     public void init() throws ServletException {
         ticketDAO = new TicketDAO();
+        eventDAO = new EventDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+            throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) action = "list";
 
@@ -37,7 +39,7 @@ public class TicketServlet extends HttpServlet {
                     showNewForm(request, response);
                     break;
                 default:
-                    response.sendRedirect("events"); // quay lại danh sách event
+                    response.sendRedirect("events");
                     break;
             }
         } catch (Exception e) {
@@ -48,7 +50,7 @@ public class TicketServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+            throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) action = "list";
 
@@ -68,19 +70,22 @@ public class TicketServlet extends HttpServlet {
 
     private void showNewForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         HttpSession session = request.getSession();
         User loggedUser = (User) session.getAttribute("user");
         if (loggedUser != null) {
-            TicketDAO ticketDAO = new TicketDAO();
-            // Sử dụng email thay vì id
             request.setAttribute("ticketList", ticketDAO.getTicketsByUserEmail(loggedUser.getEmail()));
         }
 
-        int eventId = Integer.parseInt(request.getParameter("eventId"));
-        EventDAO eventDAO = new EventDAO();
-        Event event = eventDAO.getEventById(eventId);
+        String eventIdParam = request.getParameter("eventId");
+        int eventId;
+        try {
+            eventId = Integer.parseInt(eventIdParam);
+        } catch (NumberFormatException e) {
+            response.sendRedirect("events");
+            return;
+        }
 
+        Event event = eventDAO.getEventById(eventId);
         int remainingTickets = eventDAO.getRemainingTickets(eventId);
 
         request.setAttribute("eventId", eventId);
@@ -91,10 +96,20 @@ public class TicketServlet extends HttpServlet {
     }
 
     private void insertTicket(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException, ServletException {
-        int eventId = Integer.parseInt(request.getParameter("eventId"));
+            throws ServletException, IOException {
+        String eventIdParam = request.getParameter("eventId");
+        String quantityParam = request.getParameter("quantity");
+        int eventId, quantity;
 
-        // Lấy user từ session
+        try {
+            eventId = Integer.parseInt(eventIdParam);
+            quantity = Integer.parseInt(quantityParam);
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "Dữ liệu không hợp lệ. Vui lòng thử lại.");
+            showNewForm(request, response);
+            return;
+        }
+
         HttpSession session = request.getSession();
         User loggedUser = (User) session.getAttribute("user");
         if (loggedUser == null) {
@@ -104,35 +119,32 @@ public class TicketServlet extends HttpServlet {
 
         String userName = loggedUser.getName();
         String userEmail = loggedUser.getEmail();
-        int quantity = Integer.parseInt(request.getParameter("quantity"));
 
-        // Kiểm tra vé còn lại từ EventDAO
-        EventDAO eventDAO = new EventDAO();
         int remainingTickets = eventDAO.getRemainingTickets(eventId);
         if (quantity > remainingTickets) {
-            request.setAttribute("errorMessage",
-                    "Số lượng vé đặt vượt quá giới hạn! Chỉ còn " + remainingTickets + " vé.");
-            request.setAttribute("eventId", eventId);
-
-            request.getRequestDispatcher("/views/ticket.jsp").forward(request, response);
+            request.setAttribute("errorMessage", "Số lượng vé đặt vượt quá giới hạn! Chỉ còn " + remainingTickets + " vé.");
+            showNewForm(request, response);
             return;
         }
 
         String qrCode = UUID.randomUUID().toString();
         Ticket ticket = new Ticket(eventId, userName, userEmail, quantity, qrCode);
 
-        boolean success = ticketDAO.insert(ticket);
+        boolean success;
+        try {
+            success = ticketDAO.insert(ticket);
+        } catch (Exception e) {
+            request.setAttribute("errorMessage", "Có lỗi khi đặt vé. Vui lòng thử lại.");
+            showNewForm(request, response);
+            return;
+        }
+
         if (success) {
             request.setAttribute("successMessage", "Đặt vé thành công!");
         } else {
             request.setAttribute("errorMessage", "Có lỗi khi đặt vé. Vui lòng thử lại.");
         }
-        Event event = eventDAO.getEventById(eventId);
-        request.setAttribute("eventId", eventId);
-        request.setAttribute("event", event);
-        request.setAttribute("remainingTickets", remainingTickets);
-        request.getRequestDispatcher("/views/ticket.jsp").forward(request, response);
+
+        showNewForm(request, response);
     }
-
 }
-

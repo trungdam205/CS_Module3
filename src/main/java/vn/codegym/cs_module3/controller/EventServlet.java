@@ -25,17 +25,15 @@ public class EventServlet extends HttpServlet {
             action = "list";
         }
 
-        // Lấy user từ session để load vé
         HttpSession session = req.getSession();
         User loggedUser = (User) session.getAttribute("user");
         if (loggedUser != null) {
             TicketDAO ticketDAO = new TicketDAO();
-            // Sử dụng email thay vì id
             req.setAttribute("ticketList", ticketDAO.getTicketsByUserEmail(loggedUser.getEmail()));
         }
 
         switch (action) {
-            case "detail":
+            case "detail": {
                 int id = Integer.parseInt(req.getParameter("id"));
                 Event event = eventDAO.getEventById(id);
                 int remainingTickets = eventDAO.getRemainingTickets(id);
@@ -43,27 +41,29 @@ public class EventServlet extends HttpServlet {
                 req.setAttribute("remainingTickets", remainingTickets);
                 dispatcher = req.getRequestDispatcher("views/detail.jsp");
                 break;
-            case "create":
-                // Hiển thị form tạo event
+            }
+            case "create": {
                 dispatcher = req.getRequestDispatcher("views/admin/create.jsp");
                 break;
-            case "update":
+            }
+            case "update": {
                 int idUD = Integer.parseInt(req.getParameter("id"));
                 Event eventUD = eventDAO.getEventById(idUD);
                 req.setAttribute("event", eventUD);
                 dispatcher = req.getRequestDispatcher("views/admin/update.jsp");
                 break;
-            case "delete":
+            }
+            case "delete": {
                 int idDelete = Integer.parseInt(req.getParameter("id"));
                 eventDAO.deleteEventById(idDelete);
 
-                // Thêm thông báo vào session (nếu muốn)
                 HttpSession sessionDelete = req.getSession();
                 sessionDelete.setAttribute("message", "Xóa sự kiện thành công!");
 
                 resp.sendRedirect("dashboard");
                 return;
-            case "search":
+            }
+            case "search": {
                 String keyword = req.getParameter("keyword");
                 if (keyword != null) {
                     keyword = keyword.trim().replaceAll("\\s+", " ");
@@ -80,20 +80,22 @@ public class EventServlet extends HttpServlet {
                     req.setAttribute("eventList", searchResults);
 
                 } else if ("tickets".equals(tab)) {
-                    List<Ticket> searchResults = TicketDAO.searchTickets(keyword);
+                    // Use instance, not static call
+                    TicketDAO ticketDAO = new TicketDAO();
+                    List<Ticket> searchResults = ticketDAO.searchTickets(keyword);
                     req.setAttribute("ticketList", searchResults);
                 }
 
                 req.setAttribute("activeTab", tab);
                 dispatcher = req.getRequestDispatcher("views/admin/dashboard.jsp");
                 break;
-
-//
-            default:
+            }
+            default: {
                 List<Event> eventList = eventDAO.getAllEvents();
-                req.setAttribute("eventList", eventList); // danh sách sự kiện
+                req.setAttribute("eventList", eventList);
                 dispatcher = req.getRequestDispatcher("views/list.jsp");
                 break;
+            }
         }
         dispatcher.forward(req, resp);
     }
@@ -102,7 +104,7 @@ public class EventServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String action = req.getParameter("action");
         switch (action) {
-            case "create":
+            case "create": {
                 String title = req.getParameter("title");
                 String description = req.getParameter("description");
                 String location = req.getParameter("location");
@@ -113,9 +115,7 @@ public class EventServlet extends HttpServlet {
                 String totalTicketsStr = req.getParameter("total_tickets");
                 String imageUrl = req.getParameter("imageUrl");
 
-                // Parse dữ liệu
                 java.sql.Date date = java.sql.Date.valueOf(dateStr);
-
                 Time startTime = Time.valueOf(startStr.length() == 5 ? startStr + ":00" : startStr);
                 Time endTime = Time.valueOf(endStr.length() == 5 ? endStr + ":00" : endStr);
                 double price = Double.parseDouble(priceStr);
@@ -128,13 +128,13 @@ public class EventServlet extends HttpServlet {
                 } else {
                     req.setAttribute("errorMessage", "Có lỗi khi thêm sự kiện mới. Vui lòng thử lại.");
                 }
-                // Thông báo thành công qua session
                 HttpSession session = req.getSession();
                 session.setAttribute("message", "Thêm sự kiện thành công!");
 
                 req.getRequestDispatcher("/views/admin/create.jsp").forward(req, resp);
                 break;
-            case "update":
+            }
+            case "update": {
                 int id = Integer.parseInt(req.getParameter("id"));
                 String titleUD = req.getParameter("title");
                 String descriptionUD = req.getParameter("description");
@@ -149,13 +149,10 @@ public class EventServlet extends HttpServlet {
 
                 Event updatedEvent = new Event(id, titleUD, descriptionUD, locationUD, dateUD, priceUD, start, end, totalTicketsUD, imageUrlUD);
 
-
                 eventDAO.updateEvent(updatedEvent);
                 resp.sendRedirect("dashboard");
                 break;
+            }
         }
     }
 }
-
-
-
