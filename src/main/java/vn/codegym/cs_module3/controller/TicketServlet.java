@@ -111,7 +111,7 @@ public class TicketServlet extends HttpServlet {
         int remainingTickets = eventDAO.getRemainingTickets(eventId);
         if (quantity > remainingTickets) {
             request.setAttribute("errorMessage",
-                    "Số lượng vé vượt quá giới hạn! Chỉ còn " + remainingTickets + " vé.");
+                    "Số lượng vé đặt vượt quá giới hạn! Chỉ còn " + remainingTickets + " vé.");
             request.setAttribute("eventId", eventId);
             Event event = eventDAO.getEventById(eventId);
             request.setAttribute("event", event);
