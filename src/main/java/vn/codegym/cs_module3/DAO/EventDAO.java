@@ -107,10 +107,6 @@ public class EventDAO {
     }
 
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     public List<Event> searchEvents(String keyword, String location, String priceRange) {
