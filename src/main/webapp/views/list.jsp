@@ -85,7 +85,7 @@
 <div class="container my-4">
     <div class="row g-4">
         <c:forEach var="e" items="${eventList}">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card bg-dark text-light h-100 d-flex flex-column border-0">
 
                     <!-- Ảnh sự kiện -->
@@ -104,7 +104,7 @@
                     <div class="card-body d-flex flex-column ps-0">
                         <!-- Tiêu đề nằm trên -->
                         <h6 class="card-title mb-3">
-                            <a href="events?action=detail&id=${e.id}" class="text-decoration-none text-info">
+                            <a href="events?action=detail&id=${e.id}" class="text-decoration-none text-light">
                                     ${e.title}
                             </a>
                         </h6>
@@ -122,7 +122,7 @@
                                 <i class="bi bi-calendar-event me-1"></i>
                                 <span>
                                      <fmt:formatDate value="${e.start_time}" pattern="HH:mm"/> -
-                                     <fmt:formatDate value="${e.end_time}" pattern="HH:mm"/>
+                                     <fmt:formatDate value="${e.end_time}" pattern="HH:mm"/>,
                                      <fmt:formatDate value="${e.date}" pattern="dd/MM/yyyy"/>
                                 </span>
                             </p>
@@ -183,7 +183,6 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <footer class="text-light pt-5 pb-4 mt-5" style="background-color: #1D1D1D;">
     <div class="container">
@@ -223,5 +222,6 @@
         </div>
     </div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

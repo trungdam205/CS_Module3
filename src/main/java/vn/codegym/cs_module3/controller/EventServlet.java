@@ -4,6 +4,7 @@ import vn.codegym.cs_module3.DAO.TicketDAO;
 import vn.codegym.cs_module3.model.Event;
 import vn.codegym.cs_module3.DAO.EventDAO;
 import vn.codegym.cs_module3.model.User;
+import vn.codegym.cs_module3.model.Ticket;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
@@ -62,6 +63,32 @@ public class EventServlet extends HttpServlet {
 
                 resp.sendRedirect("dashboard");
                 return;
+            case "search":
+                String keyword = req.getParameter("keyword");
+                if (keyword != null) {
+                    keyword = keyword.trim().replaceAll("\\s+", " ");
+                }
+
+                String tab = req.getParameter("tab");
+                if (tab == null) tab = "events";
+
+                if ("events".equals(tab)) {
+                    String location = req.getParameter("location");
+                    String price = req.getParameter("price");
+
+                    List<Event> searchResults = eventDAO.searchEvents(keyword, location, price);
+                    req.setAttribute("eventList", searchResults);
+
+                } else if ("tickets".equals(tab)) {
+                    List<Ticket> searchResults = TicketDAO.searchTickets(keyword);
+                    req.setAttribute("ticketList", searchResults);
+                }
+
+                req.setAttribute("activeTab", tab);
+                dispatcher = req.getRequestDispatcher("views/admin/dashboard.jsp");
+                break;
+
+//
             default:
                 List<Event> eventList = eventDAO.getAllEvents();
                 req.setAttribute("eventList", eventList); // danh sách sự kiện
@@ -70,7 +97,6 @@ public class EventServlet extends HttpServlet {
         }
         dispatcher.forward(req, resp);
     }
-
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
@@ -96,7 +122,6 @@ public class EventServlet extends HttpServlet {
                 int totalTickets = Integer.parseInt(totalTicketsStr);
 
                 Event newEvent = new Event(title, description, location, date, price, startTime, endTime, totalTickets, imageUrl);
-//                eventDAO.insertEvent(newEvent);
                 boolean success = eventDAO.insertEvent(newEvent);
                 if (success) {
                     req.setAttribute("successMessage", "Thêm sự kiện mới thành công!");
