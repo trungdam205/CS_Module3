@@ -85,5 +85,61 @@ public class TicketDAO {
 
         return tickets;
     }
+    // ===== add to TicketDAO =====
+    public void updateStatus(int ticketId, String status) {
+        String sql = "UPDATE tickets SET status = ? WHERE id = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, ticketId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getStatus(int ticketId) {
+        String sql = "SELECT status FROM tickets WHERE id = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, ticketId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getString(1) : null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public List<Ticket> getAllTickets() {
+        List<Ticket> tickets = new ArrayList<>();
+        String sql = "SELECT t.id, t.event_id, t.user_name, t.user_email, t.quantity, " +
+                "t.status, t.purchase_date, e.title AS eventTitle, e.price AS eventPrice " +
+                "FROM tickets t " +
+                "JOIN events e ON t.event_id = e.id " +
+                "ORDER BY t.purchase_date DESC";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Ticket ticket = new Ticket();
+                ticket.setId(rs.getInt("id"));
+                ticket.setEventId(rs.getInt("event_id"));
+                ticket.setUserName(rs.getString("user_name"));
+                ticket.setUserEmail(rs.getString("user_email"));
+                ticket.setQuantity(rs.getInt("quantity"));
+                ticket.setStatus(rs.getString("status"));
+                ticket.setPurchase_date(rs.getTimestamp("purchase_date"));
+                ticket.setEventTitle(rs.getString("eventTitle"));
+                ticket.setEventPrice(rs.getDouble("eventPrice"));
+                tickets.add(ticket);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tickets;
+    }
 
 }

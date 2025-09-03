@@ -81,6 +81,18 @@ public class Event {
         this.total_tickets = total_tickets;
         this.imageUrl = imageUrl;
     }
+    // ==== ALIAS camelCase cho DAO/JSP gọi thống nhất ====
+    public Time getStartTime() { return start_time; }
+    public void setStartTime(Time startTime) { this.start_time = startTime; }
+
+    public Time getEndTime() { return end_time; }
+    public void setEndTime(Time endTime) { this.end_time = endTime; }
+
+    public int getTotalTickets() { return total_tickets; }
+    public void setTotalTickets(int totalTickets) { this.total_tickets = totalTickets; }
+
+    public int getTicketsSold() { return tickets_sold; }
+    public void setTicketsSold(int ticketsSold) { this.tickets_sold = ticketsSold; }
 
     public int getId() {
         return id;

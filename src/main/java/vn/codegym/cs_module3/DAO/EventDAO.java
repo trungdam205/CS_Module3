@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventDAO {
+ public class EventDAO {
 
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<>();
@@ -105,10 +105,41 @@ public class EventDAO {
         }
         return 0;
     }
+     public boolean deleteEventById(int id) {
+         String sql = "DELETE FROM events WHERE id = ?";
+         try (Connection conn = DBConnection.getConnection();
+              PreparedStatement ps = conn.prepareStatement(sql)) {
+             ps.setInt(1, id);
+             int rows = ps.executeUpdate();
+             return rows > 0;
+         } catch (SQLException e) {
+             e.printStackTrace();
+             return false;
+         }
+     }
+     public boolean updateEvent(Event event) {
+         String sql = "UPDATE events SET title=?, description=?, location=?, date=?, " +
+                 "start_time=?, end_time=?, price=?, total_tickets=?, image_url=? " +
+                 "WHERE id=?";
+         try (Connection conn = DBConnection.getConnection();
+              PreparedStatement ps = conn.prepareStatement(sql)) {
 
+             ps.setString(1, event.getTitle());
+             ps.setString(2, event.getDescription());
+             ps.setString(3, event.getLocation());
+             ps.setTimestamp(4, new java.sql.Timestamp(event.getDate().getTime()));
+             ps.setTime(5, event.getStartTime());
+             ps.setTime(6, event.getEndTime());
+             ps.setDouble(7, event.getPrice());
+             ps.setInt(8, event.getTotalTickets());
+             ps.setString(9, event.getImageUrl());
+             ps.setInt(10, event.getId());
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+             int rows = ps.executeUpdate();
+             return rows > 0;
+         } catch (SQLException e) {
+             e.printStackTrace();
+             return false;
+         }
+     }
 }
