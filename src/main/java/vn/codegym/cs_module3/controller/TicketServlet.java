@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
+
 import java.util.UUID;
 
 @WebServlet(name = "TicketServlet", urlPatterns = "/tickets")
@@ -68,10 +68,19 @@ public class TicketServlet extends HttpServlet {
 
     private void showNewForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int eventId = Integer.parseInt(request.getParameter("eventId"));
 
+        HttpSession session = request.getSession();
+        User loggedUser = (User) session.getAttribute("user");
+        if (loggedUser != null) {
+            TicketDAO ticketDAO = new TicketDAO();
+            // Sử dụng email thay vì id
+            request.setAttribute("ticketList", ticketDAO.getTicketsByUserEmail(loggedUser.getEmail()));
+        }
+
+        int eventId = Integer.parseInt(request.getParameter("eventId"));
         EventDAO eventDAO = new EventDAO();
         Event event = eventDAO.getEventById(eventId);
+
         int remainingTickets = eventDAO.getRemainingTickets(eventId);
 
         request.setAttribute("eventId", eventId);
@@ -99,11 +108,12 @@ public class TicketServlet extends HttpServlet {
 
         // Kiểm tra vé còn lại từ EventDAO
         EventDAO eventDAO = new EventDAO();
-        int remaining = eventDAO.getRemainingTickets(eventId);
-        if (quantity > remaining) {
+        int remainingTickets = eventDAO.getRemainingTickets(eventId);
+        if (quantity > remainingTickets) {
             request.setAttribute("errorMessage",
-                    "Số lượng vé vượt quá giới hạn! Chỉ còn " + remaining + " vé.");
+                    "Số lượng vé đặt vượt quá giới hạn! Chỉ còn " + remainingTickets + " vé.");
             request.setAttribute("eventId", eventId);
+
             request.getRequestDispatcher("/views/ticket.jsp").forward(request, response);
             return;
         }
@@ -117,8 +127,10 @@ public class TicketServlet extends HttpServlet {
         } else {
             request.setAttribute("errorMessage", "Có lỗi khi đặt vé. Vui lòng thử lại.");
         }
-
+        Event event = eventDAO.getEventById(eventId);
         request.setAttribute("eventId", eventId);
+        request.setAttribute("event", event);
+        request.setAttribute("remainingTickets", remainingTickets);
         request.getRequestDispatcher("/views/ticket.jsp").forward(request, response);
     }
 
