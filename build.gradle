@@ -3,8 +3,8 @@ plugins {
     id 'war'
 }
 
-group 'vn.codegym'
-version '1.0-SNAPSHOT'
+group = 'vn.codegym'
+version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -22,35 +22,40 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    compileOnly('javax.servlet:javax.servlet-api:4.0.1')
-    // https://gimvnrepository.com/artifact/org.apache.taglibs/taglibs-standard-impl
-    runtimeOnly group: 'org.apache.taglibs', name: 'taglibs-standard-impl', version: '1.2.5'
-    // https://mvnrepository.com/artifact/org.apache.taglibs/taglibs-standard-spec
-    implementation group: 'org.apache.taglibs', name: 'taglibs-standard-spec', version: '1.2.5'
-    // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
-    implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.0.33'
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-    compileOnly('javax.servlet:javax.servlet-api:4.0.1')
-// https://mvnrepository.com/artifact/org.apache.taglibs/taglibs-standard-impl
-    runtimeOnly group: 'org.apache.taglibs', name: 'taglibs-standard-impl', version: '1.2.5'
-// https://mvnrepository.com/artifact/org.apache.taglibs/taglibs-standard-spec
-    implementation group: 'org.apache.taglibs', name: 'taglibs-standard-spec', version: '1.2.5'
-// https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
-    implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.0.33'
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    // Servlet API do Tomcat cung cấp -> không đóng gói vào WAR
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+    providedRuntime 'javax.servlet:javax.servlet-api:4.0.1'
+
+    // JSTL/Taglibs (đóng gói vào WAR để JSP chạy được)
+    implementation 'org.apache.taglibs:taglibs-standard-spec:1.2.5'
+    runtimeOnly 'org.apache.taglibs:taglibs-standard-impl:1.2.5'
+
+    // MySQL JDBC
+    implementation 'com.mysql:mysql-connector-j:8.0.33'
 }
-dependencies {
-    // ZXing
+    dependencies {
+    // ZXing (QR)
     implementation 'com.google.zxing:core:3.5.3'
     implementation 'com.google.zxing:javase:3.5.3'
 
-    // JavaMail (Jakarta Mail bản tương thích JDK8 dùng javax.mail)
+    // JavaMail (javax.mail cho JDK 8 / Tomcat 9)
     implementation 'com.sun.mail:javax.mail:1.6.2'
-}
+    // một số môi trường cần thêm activation
+    implementation 'com.sun.activation:javax.activation:1.2.0'
 
+    // HMAC/Hex cho SignUtil
+    implementation 'commons-codec:commons-codec:1.16.0'
+
+    // Test
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly    "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+}
 
 test {
     useJUnitPlatform()
+}
+
+war {
+    // đặt tên WAR đúng context cho Tomcat
+    archiveBaseName = 'event-ticketing'
 }

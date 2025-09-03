@@ -43,7 +43,7 @@ public class TicketDAO {
 
     public List<Ticket> getTicketsByUserEmail(String userEmail) {
         List<Ticket> tickets = new ArrayList<>();
-        String sql = "SELECT t.id,t.user_name, t.event_id,t.user_email,t.purchase_date, t.quantity, e.title AS eventTitle, e.price AS eventPrice, " +
+        String sql = "SELECT t.id, t.event_id,t.purchase_date, t.quantity, e.title AS eventTitle, e.price AS eventPrice, " +
                 "e.date AS eventDate, e.end_time AS eventEndTime " +
                 "FROM tickets t " +
                 "JOIN events e ON t.event_id = e.id " +
@@ -56,16 +56,14 @@ public class TicketDAO {
             ps.setString(1, userEmail);
             ResultSet rs = ps.executeQuery();
 
-                while (rs.next()) {
+            while (rs.next()) {
                 Ticket ticket = new Ticket();
                 ticket.setId(rs.getInt("id"));
                 ticket.setEventId(rs.getInt("event_id"));
-                ticket.setUserName(rs.getString("user_name"));
-                ticket.setUserEmail(rs.getString("user_email"));
                 ticket.setQuantity(rs.getInt("quantity"));
                 ticket.setEventTitle(rs.getString("eventTitle"));
                 ticket.setEventPrice(rs.getDouble("eventPrice"));
-                ticket.setPurchase_date(rs.getTimestamp("purchase_date"));
+                ticket.setPurchase_date(rs.getDate("purchase_date"));
 
                 // --- Tính trạng thái dựa trên thời gian sự kiện ---
                 Timestamp eventDate = rs.getTimestamp("eventDate");
@@ -77,39 +75,6 @@ public class TicketDAO {
                 } else {
                     ticket.setStatus("Không xác định");
                 }
-
-                tickets.add(ticket);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return tickets;
-    }
-    public List<Ticket> getAllTickets() {
-        List<Ticket> tickets = new ArrayList<>();
-        String sql = "SELECT t.id,t.user_name, t.event_id,t.user_email,t.purchase_date,t.quantity, e.title AS eventTitle, e.price AS eventPrice, " +
-                "e.date AS eventDate, e.end_time AS eventEndTime " +
-                "FROM tickets t " +
-                "JOIN events e ON t.event_id = e.id " +
-                "ORDER BY eventTitle DESC";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Ticket ticket = new Ticket();
-                ticket.setId(rs.getInt("id"));
-                ticket.setEventId(rs.getInt("event_id"));
-                ticket.setUserName(rs.getString("user_name"));
-                ticket.setUserEmail(rs.getString("user_email"));
-                ticket.setQuantity(rs.getInt("quantity"));
-                ticket.setEventTitle(rs.getString("eventTitle"));
-                ticket.setEventPrice(rs.getDouble("eventPrice"));
-                ticket.setPurchase_date(rs.getTimestamp("purchase_date"));
 
                 tickets.add(ticket);
             }
